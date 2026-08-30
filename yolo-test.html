@@ -1404,13 +1404,12 @@ async function detectCars(){
     }
 }
 
-}
+
  
  
 /* ==================================================
    فحص المركبة والبحث عن اللوحة
 ================================================== */
-
 async function inspectVehicle(vehicle){
 
     if(!vehicle)
@@ -1421,125 +1420,54 @@ async function inspectVehicle(vehicle){
 
     try{
 
-        result.innerHTML =
-        '<span class="cyan">🔎 جاري البحث عن لوحة المركبة...</span>';
-
-        const [
-            x,
-            y,
-            w,
-            h
-        ] = vehicle.bbox;
-
-        const source =
-        document.createElement("canvas");
-
-        const sctx =
-        source.getContext("2d");
-
-        const padding = 0.15;
-
-        const sx =
-        Math.max(
-            0,
-            x - w * padding
-        );
-
-        const sy =
-        Math.max(
-            0,
-            y - h * padding
-        );
-
-        const sw =
-        Math.min(
-            video.videoWidth - sx,
-            w * (1 + padding * 2)
-        );
-
-        const sh =
-        Math.min(
-            video.videoHeight - sy,
-            h * (1 + padding * 2)
-        );
-
-        source.width = 640;
-
-        source.height =
-        Math.max(
-            320,
-            Math.round(
-                640 * sh / sw
-            )
-        );
-
-        sctx.drawImage(
-            video,
-            sx,
-            sy,
-            sw,
-            sh,
-            0,
-            0,
-            source.width,
-            source.height
-        );
-
-        zoomCanvas.width =
-        source.width;
-
-        zoomCanvas.height =
-        source.height;
-
-        zoomCtx.drawImage(
-            source,
-            0,
-            0
-        );
-
-        zoomBox.style.display =
-        "block";
+        console.log("===== PLATE MODEL =====");
 
         console.log(
-            "Plate model inputs:",
+            "INPUT NAMES:",
             plateModel.inputNames
         );
 
         console.log(
-            "Plate model outputs:",
+            "OUTPUT NAMES:",
             plateModel.outputNames
         );
 
         console.log(
-            "Plate model input metadata:",
+            "INPUT METADATA:",
             plateModel.inputMetadata
         );
 
         console.log(
-            "Plate model output metadata:",
+            "OUTPUT METADATA:",
             plateModel.outputMetadata
         );
 
-        result.innerHTML =
-        '<span class="yellow">🟨 السيارة محددة — نموذج اللوحة جاهز للفحص</span>';
+        alert(
+            "تم تحميل نموذج اللوحة بنجاح\n\n" +
+            "Inputs:\n" +
+            JSON.stringify(
+                plateModel.inputNames
+            ) +
+            "\n\nOutputs:\n" +
+            JSON.stringify(
+                plateModel.outputNames
+            )
+        );
 
     }catch(error){
 
         console.error(
-            "inspectVehicle error:",
+            "Model information error:",
             error
         );
 
-        result.innerHTML =
-        '<span class="red">❌ خطأ أثناء فحص اللوحة</span>';
+        alert(
+            "حدث خطأ:\n" +
+            error.message
+        );
     }
-
 }
 
-
-/* ==================================================
-   اختيار أفضل مركبة
-================================================== */
 /* ==================================================
    اختيار أفضل مركبة
 ================================================== */
@@ -2220,4 +2148,4 @@ loadModels();
 </script>
 
 </body>
-    </html>
+</html>
