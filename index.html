@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>مساعد رصد المركبات</title>
+<title>رصد المركبات</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
@@ -19,10 +19,15 @@ body{
 }
 
 h2{
-    margin:12px;
+    margin:10px;
 }
 
-#container{
+#status{
+    background:#222;
+    padding:10px;
+}
+
+#viewer{
     position:relative;
     width:100%;
     height:70vh;
@@ -32,16 +37,15 @@ h2{
 
 video,canvas{
     position:absolute;
+    inset:0;
     width:100%;
     height:100%;
     object-fit:cover;
-    left:0;
-    top:0;
 }
 
 button{
     padding:14px 25px;
-    margin:10px;
+    margin:10px 5px;
     border:0;
     border-radius:10px;
     font-size:18px;
@@ -57,29 +61,23 @@ button{
     background:#444;
     color:white;
 }
-
-#status{
-    padding:10px;
-    background:#222;
-}
 </style>
 </head>
 
 <body>
 
-<h2>🚗 مساعد رصد المركبات</h2>
+<h2>🚗 رصد المركبات الذكي</h2>
 
 <div id="status">
-جاري تحميل الذكاء الاصطناعي...
+جاري تحميل النموذج...
 </div>
 
-<div id="container">
+<div id="viewer">
 
 <video id="video"
        autoplay
        muted
-       playsinline>
-</video>
+       playsinline></video>
 
 <canvas id="canvas"></canvas>
 
@@ -97,24 +95,31 @@ button{
 
 let model = null;
 let running = false;
+let detecting = false;
 
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const status = document.getElementById("status");
+const video =
+document.getElementById("video");
 
-let audioContext = null;
-let lastVehicleCount = 0;
-let lastBeep = 0;
+const canvas =
+document.getElementById("canvas");
+
+const ctx =
+canvas.getContext("2d");
+
+const status =
+document.getElementById("status");
+
+let audioCtx = null;
+let lastAlert = 0;
 
 
 /* الصوت */
 
 function initAudio(){
 
-    if(!audioContext){
+    if(!audioCtx){
 
-        audioContext =
+        audioCtx =
         new (window.AudioContext ||
         window.webkitAudioContext)();
 
@@ -122,34 +127,33 @@ function initAudio(){
 
 }
 
-
 function beep(){
-
-    if(!audioContext) return;
 
     const now = Date.now();
 
-    if(now - lastBeep < 1500) return;
+    if(now - lastAlert < 2000) return;
 
-    lastBeep = now;
+    lastAlert = now;
 
-    const oscillator =
-        audioContext.createOscillator();
+    if(!audioCtx) return;
+
+    const osc =
+    audioCtx.createOscillator();
 
     const gain =
-        audioContext.createGain();
+    audioCtx.createGain();
 
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
 
-    oscillator.frequency.value = 440;
-    gain.gain.value = 0.05;
+    osc.frequency.value = 440;
+    gain.gain.value = 0.04;
 
-    oscillator.start();
+    osc.start();
 
     setTimeout(()=>{
-        oscillator.stop();
-    },120);
+        osc.stop();
+    },100);
 
 }
 
@@ -161,71 +165,64 @@ async function loadModel(){
     try{
 
         status.innerText =
-        "جاري تحميل نموذج السيارات...";
-
-        if(typeof tf === "undefined"){
-
-            throw new Error(
-            "TensorFlow لم يتم تحميله");
-
-        }
+        "جاري تحميل الذكاء الاصطناعي...";
 
         await tf.ready();
 
-        status.innerText =
-        "جاري تحميل نموذج اكتشاف السيارات...";
-
-        model = await cocoSsd.load();
+        model =
+        await cocoSsd.load();
 
         status.innerText =
-        "✅ النموذج جاهز. اضغط تشغيل الكاميرا.";
+        "✅ النموذج جاهز";
 
-    }
-    catch(error){
+    }catch(error){
 
         console.error(error);
 
         status.innerText =
-        "❌ فشل تحميل نموذج الذكاء الاصطناعي. أعد تحميل الصفحة وتأكد من الإنترنت.";
+        "❌ فشل تحميل النموذج";
 
     }
 
 }
 
 
-/* تشغيل الكاميرا */
+/* الكاميرا */
 
 async function startCamera(){
 
     if(!model){
 
         alert(
-        "انتظر حتى ينتهي تحميل نموذج الذكاء الاصطناعي.");
+        "انتظر حتى يصبح النموذج جاهزًا");
 
         return;
 
     }
 
+    if(running) return;
+
     try{
 
         initAudio();
 
-        if(audioContext.state === "suspended"){
-            await audioContext.resume();
+        if(audioCtx.state === "suspended"){
+            await audioCtx.resume();
         }
 
         const stream =
-        await navigator.mediaDevices.getUserMedia({
+        await navigator.mediaDevices
+        .getUserMedia({
 
             video:{
                 facingMode:{
                     ideal:"environment"
                 },
                 width:{
-                    ideal:1280
+                    ideal:960
                 },
                 height:{
-                    ideal:720
+                    ideal:540
                 }
             },
 
@@ -233,14 +230,16 @@ async function startCamera(){
 
         });
 
-        video.srcObject = stream;
+        video.srcObject =
+        stream;
 
         running = true;
 
         status.innerText =
-        "🟢 الكاميرا تعمل — ابحث عن السيارات";
+        "🟢 الكاميرا تعمل";
 
-        video.onloadedmetadata = ()=>{
+        video.onloadedmetadata =
+        ()=>{
 
             canvas.width =
             video.videoWidth;
@@ -252,13 +251,12 @@ async function startCamera(){
 
         };
 
-    }
-    catch(error){
+    }catch(error){
 
         console.error(error);
 
         alert(
-        "تعذر تشغيل الكاميرا. تأكد من السماح للمتصفح باستخدام الكاميرا.");
+        "تعذر الوصول إلى الكاميرا");
 
     }
 
@@ -271,11 +269,15 @@ function stopCamera(){
 
     running = false;
 
+    detecting = false;
+
     if(video.srcObject){
 
         video.srcObject
         .getTracks()
-        .forEach(track=>track.stop());
+        .forEach(track=>{
+            track.stop();
+        });
 
         video.srcObject = null;
 
@@ -289,16 +291,25 @@ function stopCamera(){
     );
 
     status.innerText =
-    "الكاميرا متوقفة.";
+    "الكاميرا متوقفة";
 
 }
 
 
-/* اكتشاف السيارات */
+/* الذكاء الاصطناعي */
 
 async function detect(){
 
-    if(!running || !model) return;
+    if(!running) return;
+
+    if(detecting){
+
+        requestAnimationFrame(detect);
+        return;
+
+    }
+
+    detecting = true;
 
     try{
 
@@ -311,82 +322,3 @@ async function detect(){
             canvas.width,
             canvas.height
         );
-
-        const vehicles =
-        predictions.filter(p =>
-
-            ["car","truck","bus"]
-            .includes(p.class)
-
-            && p.score >= 0.55
-
-        );
-
-        if(
-            vehicles.length > 0 &&
-            lastVehicleCount === 0
-        ){
-
-            beep();
-
-        }
-
-        lastVehicleCount =
-        vehicles.length;
-
-
-        vehicles.forEach(p=>{
-
-            const [x,y,w,h] =
-            p.bbox;
-
-            ctx.strokeStyle =
-            "#FFD700";
-
-            ctx.lineWidth = 5;
-
-            ctx.strokeRect(
-                x,y,w,h
-            );
-
-            ctx.fillStyle =
-            "#FFD700";
-
-            ctx.font =
-            "bold 22px Arial";
-
-            const name =
-            p.class === "car"
-            ? "سيارة"
-            : p.class === "truck"
-            ? "شاحنة"
-            : "حافلة";
-
-            ctx.fillText(
-                name,
-                x,
-                Math.max(25,y-8)
-            );
-
-        });
-
-    }
-    catch(error){
-
-        console.error(error);
-
-    }
-
-    requestAnimationFrame(detect);
-
-}
-
-
-/* بدء تحميل النموذج */
-
-loadModel();
-
-</script>
-
-</body>
-</html>
