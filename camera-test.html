@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>اختبار كاميرا المركبة</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#000;
+    color:#fff;
+    font-family:Arial,sans-serif;
+}
+
+#page{
+    width:100%;
+    height:100%;
+    position:relative;
+    overflow:hidden;
+    background:#000;
+}
+
+#video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    background:#111;
+}
+
+.panel{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    z-index:10;
+    padding:15px;
+    background:rgba(0,0,0,.75);
+    text-align:center;
+}
+
+h2{
+    margin:0 0 10px;
+    font-size:20px;
+}
+
+#status{
+    font-size:15px;
+    margin-bottom:10px;
+}
+
+button{
+    border:0;
+    border-radius:10px;
+    padding:13px 20px;
+    margin:4px;
+    font-size:16px;
+    font-weight:bold;
+    color:#fff;
+    background:#1683ff;
+}
+
+.stop{
+    background:#d71919;
+}
+
+.info{
+    position:absolute;
+    bottom:15px;
+    left:10px;
+    right:10px;
+    z-index:10;
+    background:rgba(0,0,0,.75);
+    border-radius:12px;
+    padding:12px;
+    text-align:center;
+    font-size:14px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="page">
+
+    <video
+        id="video"
+        autoplay
+        muted
+        playsinline>
+    </video>
+
+    <div class="panel">
+
+        <h2>📷 اختبار كاميرا الهاتف</h2>
+
+        <div id="status">
+            اضغط تشغيل الكاميرا
+        </div>
+
+        <button onclick="startCamera()">
+            📷 تشغيل الكاميرا
+        </button>
+
+        <button
+            class="stop"
+            onclick="stopCamera()">
+            ⛔ إيقاف الكاميرا
+        </button>
+
+    </div>
+
+    <div class="info">
+        هذا اختبار للكاميرا فقط.<br>
+        لا يوجد TensorFlow أو ONNX أو OCR.
+    </div>
+
+</div>
+
+<script>
+
+let stream = null;
+
+const video =
+document.getElementById("video");
+
+const status =
+document.getElementById("status");
+
+
+async function startCamera(){
+
+    try{
+
+        status.innerText =
+        "⏳ جاري طلب صلاحية الكاميرا...";
+
+
+        if(
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ){
+
+            status.innerText =
+            "❌ المتصفح لا يدعم تشغيل الكاميرا";
+
+            return;
+        }
+
+
+        if(stream){
+
+            stopCamera();
+        }
+
+
+        stream =
+        await navigator.mediaDevices.getUserMedia({
+
+            video:{
+                facingMode:{
+                    ideal:"environment"
+                },
+
+                width:{
+                    ideal:1280
+                },
+
+                height:{
+                    ideal:720
+                }
+            },
+
+            audio:false
+
+        });
+
+
+        video.srcObject =
+        stream;
+
+
+        await video.play();
+
+
+        status.innerText =
+        "🟢 الكاميرا تعمل بنجاح";
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        let message =
+        "❌ تعذر تشغيل الكاميرا";
+
+
+        if(error.name === "NotAllowedError"){
+
+            message =
+            "❌ تم رفض صلاحية الكاميرا";
+
+        }
+
+        else if(
+            error.name === "NotFoundError"
+        ){
+
+            message =
+            "❌ لم يتم العثور على كاميرا";
+
+        }
+
+        else if(
+            error.name === "NotReadableError"
+        ){
+
+            message =
+            "❌ الكاميرا مستخدمة من تطبيق آخر";
+
+        }
+
+        else if(
+            error.name === "SecurityError"
+        ){
+
+            message =
+            "❌ المتصفح منع الوصول للكاميرا";
+
+        }
+
+        else if(error.message){
+
+            message +=
+            ": " +
+            error.message;
+        }
+
+
+        status.innerText =
+        message;
+
+    }
+
+}
+
+
+function stopCamera(){
+
+    if(stream){
+
+        stream
+        .getTracks()
+        .forEach(
+            track=>{
+                track.stop();
+            }
+        );
+
+        stream = null;
+    }
+
+
+    video.srcObject =
+    null;
+
+
+    status.innerText =
+    "⛔ تم إيقاف الكاميرا";
+}
+
+
+window.addEventListener(
+    "beforeunload",
+    ()=>{
+        stopCamera();
+    }
+);
+
+</script>
+
+</body>
+</html>
