@@ -9,12 +9,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.29.0/dist/ort.min.js"></script>
 
 <style>
-
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
     margin:0;
@@ -24,10 +22,6 @@ html,body{
     color:#fff;
     font-family:Arial,sans-serif;
 }
-
-/* =========================
-   صفحة المواصفات
-========================= */
 
 #setupPage{
     min-height:100vh;
@@ -66,26 +60,25 @@ input,select{
     color:#111;
 }
 
-.saveBtn{
+.saveBtn,.clearBtn{
     width:100%;
-    padding:15px;
-    margin-top:22px;
     border:0;
     border-radius:10px;
-    background:#1683ff;
     color:#fff;
-    font-size:18px;
     font-weight:bold;
 }
 
+.saveBtn{
+    padding:15px;
+    margin-top:22px;
+    background:#1683ff;
+    font-size:18px;
+}
+
 .clearBtn{
-    width:100%;
     padding:12px;
     margin-top:10px;
-    border:0;
-    border-radius:10px;
     background:#555;
-    color:#fff;
     font-size:16px;
 }
 
@@ -97,10 +90,6 @@ input,select{
     line-height:1.7;
     font-size:14px;
 }
-
-/* =========================
-   صفحة الكاميرا
-========================= */
 
 #cameraPage{
     display:none;
@@ -132,13 +121,10 @@ input,select{
     left:0;
     right:0;
     z-index:20;
-
     padding:10px;
-
     display:flex;
     justify-content:space-between;
     align-items:center;
-
     background:rgba(0,0,0,.65);
 }
 
@@ -161,11 +147,9 @@ input,select{
     top:58px;
     right:10px;
     z-index:20;
-
     background:rgba(0,0,0,.7);
     border-radius:20px;
     padding:8px 12px;
-
     font-size:13px;
 }
 
@@ -175,32 +159,23 @@ input,select{
     left:10px;
     right:10px;
     z-index:20;
-
     background:rgba(0,0,0,.75);
     border-radius:10px;
     padding:12px;
-
     text-align:center;
     font-weight:bold;
 }
 
 #zoomBox{
     display:none;
-
     position:absolute;
-
     left:5%;
     right:5%;
     bottom:70px;
-
     z-index:30;
-
     background:#000;
-
     border:4px solid #ffd700;
-
     border-radius:12px;
-
     overflow:hidden;
 }
 
@@ -221,7 +196,6 @@ input,select{
     bottom:65px;
     left:10px;
     z-index:40;
-
     display:flex;
     gap:8px;
 }
@@ -235,27 +209,13 @@ input,select{
     color:#fff;
 }
 
-.red{
-    color:#ff3030;
-}
-
-.yellow{
-    color:#ffd700;
-}
-
-.green{
-    color:#00ff66;
-}
-
+.red{color:#ff3030}
+.yellow{color:#ffd700}
+.green{color:#00ff66}
 </style>
 </head>
 
 <body>
-
-
-<!-- =========================
-     صفحة المواصفات
-========================= -->
 
 <div id="setupPage">
 
@@ -265,9 +225,7 @@ input,select{
 
     <div class="setupCard">
 
-        <label>
-            🔢 رقم اللوحة
-        </label>
+        <label>🔢 رقم اللوحة</label>
 
         <input
             id="targetPlate"
@@ -275,189 +233,89 @@ input,select{
             placeholder="مثال: 1234"
         >
 
-
-        <label>
-            🎨 لون المركبة
-        </label>
+        <label>🎨 لون المركبة</label>
 
         <select id="targetColor">
-
-            <option value="">
-                أي لون
-            </option>
-
-            <option value="white">
-                أبيض
-            </option>
-
-            <option value="black">
-                أسود
-            </option>
-
-            <option value="red">
-                أحمر
-            </option>
-
-            <option value="blue">
-                أزرق
-            </option>
-
-            <option value="gray">
-                رمادي
-            </option>
-
-            <option value="silver">
-                فضي
-            </option>
-
-            <option value="yellow">
-                أصفر
-            </option>
-
+            <option value="">أي لون</option>
+            <option value="white">أبيض</option>
+            <option value="black">أسود</option>
+            <option value="red">أحمر</option>
+            <option value="blue">أزرق</option>
+            <option value="gray">رمادي</option>
+            <option value="silver">فضي</option>
+            <option value="yellow">أصفر</option>
         </select>
 
-
-        <label>
-            🚗 نوع المركبة
-        </label>
+        <label>🚗 نوع المركبة</label>
 
         <select id="targetType">
-
-            <option value="">
-                أي نوع
-            </option>
-
-            <option value="car">
-                سيارة
-            </option>
-
-            <option value="suv">
-                🚙 جيب / SUV
-            </option>
-
-            <option value="truck">
-                🚚 شاحنة
-            </option>
-
-            <option value="bus">
-                🚌 حافلة
-            </option>
-
+            <option value="">أي نوع</option>
+            <option value="car">سيارة</option>
+            <option value="suv">🚙 جيب / SUV</option>
+            <option value="truck">🚚 شاحنة</option>
+            <option value="bus">🚌 حافلة</option>
         </select>
 
-
-        <button
-            class="saveBtn"
-            onclick="saveAndStart()"
-        >
+        <button class="saveBtn" onclick="saveAndStart()">
             💾 حفظ المعلومات وبدء الكاميرا
         </button>
 
-
-        <button
-            class="clearBtn"
-            onclick="clearTarget()"
-        >
+        <button class="clearBtn" onclick="clearTarget()">
             🗑 مسح المعلومات
         </button>
 
-
         <div class="setupInfo">
-
             ℹ️ بعد حفظ المعلومات ستختفي هذه الصفحة
             وتظهر الكاميرا بشكل كامل تقريبًا.
-
             <br><br>
-
-            يمكنك العودة لاحقًا بواسطة زر
-            ⚙️ تعديل المواصفات.
-
+            يمكنك العودة لاحقًا بواسطة زر ⚙️ تعديل.
         </div>
 
     </div>
-
 </div>
-
-
-<!-- =========================
-     صفحة الكاميرا
-========================= -->
 
 <div id="cameraPage">
 
-    <video
-        id="video"
-        autoplay
-        muted
-        playsinline
-    ></video>
-
+    <video id="video" autoplay muted playsinline></video>
     <canvas id="canvas"></canvas>
-
 
     <div class="topBar">
 
-        <div
-            id="targetSummary"
-            class="targetSummary"
-        >
+        <div id="targetSummary" class="targetSummary">
             🎯 الهدف: لا توجد مواصفات
         </div>
 
-        <button
-            class="editBtn"
-            onclick="showSetup()"
-        >
+        <button class="editBtn" onclick="showSetup()">
             ⚙️ تعديل
         </button>
 
     </div>
 
-
-    <div
-        id="status"
-        class="status"
-    >
+    <div id="status" class="status">
         جاري تحميل النظام...
     </div>
 
-
-    <div
-        id="result"
-        class="result"
-    >
+    <div id="result" class="result">
         انتظار الكاميرا
     </div>
 
-
-    <div
-        id="zoomBox"
-    >
+    <div id="zoomBox">
 
         <div class="zoomTitle">
             🔎 المركبة المرشحة
         </div>
 
-        <canvas
-            id="zoomCanvas"
-        ></canvas>
+        <canvas id="zoomCanvas"></canvas>
 
     </div>
 
-
     <div class="cameraButtons">
 
-        <button
-            class="cameraBtn"
-            onclick="saveZoom()"
-        >
+        <button class="cameraBtn" onclick="saveZoom()">
             📸 لقطة
         </button>
 
-        <button
-            class="cameraBtn"
-            onclick="stopCamera()"
-        >
+        <button class="cameraBtn" onclick="stopCamera()">
             ■ إيقاف
         </button>
 
@@ -465,88 +323,43 @@ input,select{
 
 </div>
 
-
 <script>
 
-/* =========================
-   المتغيرات
-========================= */
-
 let model=null;
-
+let plateModel=null;
 let running=false;
-
 let detecting=false;
-
 let selectedVehicle=null;
-
 let ocrBusy=false;
-
 let lastMatch=false;
-
 let lastAlarm=0;
-
 let audioCtx=null;
+let lastOCRTime=0;
 
+const PLATE_MODEL_URL =
+"https://huggingface.co/Mohammed1999222/car-detector-model/resolve/main/license-plate-finetune-v1n.onnx";
 
-const video=
-document.getElementById("video");
+const video=document.getElementById("video");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-const canvas=
-document.getElementById("canvas");
+const zoomCanvas=document.getElementById("zoomCanvas");
+const zoomCtx=zoomCanvas.getContext("2d");
 
-const ctx=
-canvas.getContext("2d");
+const setupPage=document.getElementById("setupPage");
+const cameraPage=document.getElementById("cameraPage");
+const status=document.getElementById("status");
+const result=document.getElementById("result");
+const zoomBox=document.getElementById("zoomBox");
+const targetSummary=document.getElementById("targetSummary");
 
-const zoomCanvas=
-document.getElementById("zoomCanvas");
-
-const zoomCtx=
-zoomCanvas.getContext("2d");
-
-const setupPage=
-document.getElementById("setupPage");
-
-const cameraPage=
-document.getElementById("cameraPage");
-
-const status=
-document.getElementById("status");
-
-const result=
-document.getElementById("result");
-
-const zoomBox=
-document.getElementById("zoomBox");
-
-const targetSummary=
-document.getElementById("targetSummary");
-
-
-/* =========================
-   حفظ المواصفات
-========================= */
 
 function saveTarget(){
 
     const data={
-
-        plate:
-        document
-        .getElementById("targetPlate")
-        .value
-        .trim(),
-
-        color:
-        document
-        .getElementById("targetColor")
-        .value,
-
-        type:
-        document
-        .getElementById("targetType")
-        .value
-
+        plate:document.getElementById("targetPlate").value.trim(),
+        color:document.getElementById("targetColor").value,
+        type:document.getElementById("targetType").value
     };
 
     localStorage.setItem(
@@ -558,39 +371,20 @@ function saveTarget(){
 }
 
 
-/* =========================
-   تحميل المواصفات
-========================= */
-
 function loadTarget(){
 
-    const saved=
-    localStorage.getItem(
-        "vehicleTarget"
-    );
+    const saved=localStorage.getItem("vehicleTarget");
 
     if(!saved)
         return null;
 
     try{
 
-        const data=
-        JSON.parse(saved);
+        const data=JSON.parse(saved);
 
-        document
-        .getElementById("targetPlate")
-        .value=
-        data.plate || "";
-
-        document
-        .getElementById("targetColor")
-        .value=
-        data.color || "";
-
-        document
-        .getElementById("targetType")
-        .value=
-        data.type || "";
+        document.getElementById("targetPlate").value=data.plate||"";
+        document.getElementById("targetColor").value=data.color||"";
+        document.getElementById("targetType").value=data.type||"";
 
         return data;
 
@@ -599,24 +393,16 @@ function loadTarget(){
         return null;
 
     }
-
 }
 
 
-/* =========================
-   عرض ملخص الهدف
-========================= */
-
 function updateSummary(){
 
-    const data=
-    loadTarget();
+    const data=loadTarget();
 
     if(!data){
 
-        targetSummary.innerText=
-        "🎯 لا توجد مواصفات";
-
+        targetSummary.innerText="🎯 لا توجد مواصفات";
         return;
 
     }
@@ -624,8 +410,7 @@ function updateSummary(){
     let text="🎯 الهدف: ";
 
     if(data.plate)
-        text+=
-        "لوحة "+data.plate;
+        text+="لوحة "+data.plate;
 
     if(data.type){
 
@@ -643,122 +428,70 @@ function updateSummary(){
 
         if(data.type==="bus")
             text+="حافلة";
-
     }
 
-    targetSummary.innerText=
-    text;
-
+    targetSummary.innerText=text;
 }
 
 
-/* =========================
-   الانتقال للكاميرا
-========================= */
-
 async function saveAndStart(){
 
-    const data=
-    saveTarget();
+    const data=saveTarget();
 
-    if(
-        !data.plate &&
-        !data.type &&
-        !data.color
-    ){
+    if(!data.plate && !data.type && !data.color){
 
-        alert(
-        "أدخل مواصفة واحدة على الأقل"
-        );
-
+        alert("أدخل مواصفة واحدة على الأقل");
         return;
 
     }
 
     updateSummary();
 
-    setupPage.style.display=
-    "none";
-
-    cameraPage.style.display=
-    "block";
+    setupPage.style.display="none";
+    cameraPage.style.display="block";
 
     await startCamera();
-
 }
 
-
-/* =========================
-   العودة للمواصفات
-========================= */
 
 function showSetup(){
 
     stopCamera();
 
-    cameraPage.style.display=
-    "none";
-
-    setupPage.style.display=
-    "block";
+    cameraPage.style.display="none";
+    setupPage.style.display="block";
 
     loadTarget();
-
 }
 
-
-/* =========================
-   مسح الهدف
-========================= */
 
 function clearTarget(){
 
-    localStorage.removeItem(
-        "vehicleTarget"
-    );
+    localStorage.removeItem("vehicleTarget");
 
-    document
-    .getElementById("targetPlate")
-    .value="";
-
-    document
-    .getElementById("targetColor")
-    .value="";
-
-    document
-    .getElementById("targetType")
-    .value="";
-
+    document.getElementById("targetPlate").value="";
+    document.getElementById("targetColor").value="";
+    document.getElementById("targetType").value="";
 }
 
-
-/* =========================
-   الصوت
-========================= */
 
 function initAudio(){
 
     if(!audioCtx){
 
-        audioCtx=
-        new(
+        audioCtx=new(
             window.AudioContext ||
             window.webkitAudioContext
         )();
-
     }
-
 }
 
 
 function alarm(){
 
-    const now=
-    Date.now();
+    const now=Date.now();
 
-    if(
-        now-lastAlarm<3000
-    )
+    if(now-lastAlarm<3000)
         return;
 
     lastAlarm=now;
@@ -766,66 +499,77 @@ function alarm(){
     if(!audioCtx)
         return;
 
-    const osc=
-    audioCtx.createOscillator();
-
-    const gain=
-    audioCtx.createGain();
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
 
     osc.connect(gain);
+    gain.connect(audioCtx.destination);
 
-    gain.connect(
-        audioCtx.destination
-    );
-
-    osc.frequency.value=
-    900;
-
-    gain.gain.value=
-    0.35;
+    osc.frequency.value=900;
+    gain.gain.value=.35;
 
     osc.start();
 
     setTimeout(()=>{
-        osc.frequency.value=
-        650;
+        osc.frequency.value=650;
     },200);
 
     setTimeout(()=>{
         osc.stop();
     },650);
-
 }
 
 
 /* =========================
-   تحميل الذكاء الاصطناعي
+   تحميل النماذج
 ========================= */
 
 async function loadAI(){
 
     try{
 
-        status.innerText=
-        "جاري تحميل نموذج المركبات...";
+        status.innerText="جاري تحميل نموذج المركبات...";
 
         await tf.ready();
 
-        model=
-        await cocoSsd.load();
+        model=await cocoSsd.load();
 
-        status.innerText=
-        "✅ النظام جاهز";
+        status.innerText="جاري تحميل نموذج اللوحات...";
+
+        let providers=["wasm"];
+
+        if("gpu" in navigator)
+            providers=["webgpu","wasm"];
+
+        plateModel=
+        await ort.InferenceSession.create(
+            PLATE_MODEL_URL,
+            {
+                executionProviders:providers,
+                graphOptimizationLevel:"all"
+            }
+        );
+
+        console.log(
+            "Plate input:",
+            plateModel.inputMetadata
+        );
+
+        console.log(
+            "Plate output:",
+            plateModel.outputMetadata
+        );
+
+        status.innerText="✅ النظام جاهز";
 
     }catch(e){
 
         console.error(e);
 
         status.innerText=
-        "❌ فشل تحميل النموذج";
+        "❌ تعذر تحميل نموذج اللوحات";
 
     }
-
 }
 
 
@@ -837,10 +581,7 @@ async function startCamera(){
 
     if(!model){
 
-        alert(
-        "انتظر حتى يكتمل تحميل النظام"
-        );
-
+        alert("انتظر حتى يكتمل تحميل النظام");
         return;
 
     }
@@ -852,61 +593,35 @@ async function startCamera(){
 
         initAudio();
 
-        if(
-            audioCtx.state===
-            "suspended"
-        ){
-
+        if(audioCtx.state==="suspended")
             await audioCtx.resume();
 
-        }
-
-
         const stream=
-        await navigator
-        .mediaDevices
-        .getUserMedia({
+        await navigator.mediaDevices.getUserMedia({
 
             video:{
-
                 facingMode:{
                     ideal:"environment"
                 },
-
-                width:{
-                    ideal:1280
-                },
-
-                height:{
-                    ideal:720
-                }
-
+                width:{ideal:1280},
+                height:{ideal:720}
             },
 
             audio:false
-
         });
 
-
-        video.srcObject=
-        stream;
+        video.srcObject=stream;
 
         running=true;
 
-        status.innerText=
-        "🟢 المراقبة تعمل";
+        status.innerText="🟢 المراقبة تعمل";
 
-        video.onloadedmetadata=
-        ()=>{
+        video.onloadedmetadata=()=>{
 
-            canvas.width=
-            video.videoWidth;
-
-            canvas.height=
-            video.videoHeight;
+            canvas.width=video.videoWidth;
+            canvas.height=video.videoHeight;
 
             detect();
-
         };
 
     }catch(e){
@@ -914,51 +629,38 @@ async function startCamera(){
         console.error(e);
 
         alert(
-        "تعذر تشغيل الكاميرا"
+            "تعذر تشغيل الكاميرا: "+
+            (e.message||"تحقق من صلاحية الكاميرا")
         );
 
     }
-
 }
 
-
-/* =========================
-   إيقاف الكاميرا
-========================= */
 
 function stopCamera(){
 
     running=false;
-
     detecting=false;
-
     selectedVehicle=null;
 
     if(video.srcObject){
 
         video.srcObject
         .getTracks()
-        .forEach(
-            track=>track.stop()
-        );
+        .forEach(track=>track.stop());
 
         video.srcObject=null;
-
     }
 
     ctx.clearRect(
-        0,
-        0,
+        0,0,
         canvas.width,
         canvas.height
     );
 
-    zoomBox.style.display=
-    "none";
+    zoomBox.style.display="none";
 
-    result.innerText=
-    "الكاميرا متوقفة";
-
+    result.innerText="الكاميرا متوقفة";
 }
 
 
@@ -973,11 +675,7 @@ async function detect(){
 
     if(detecting){
 
-        setTimeout(
-            detect,
-            100
-        );
-
+        setTimeout(detect,100);
         return;
 
     }
@@ -990,103 +688,113 @@ async function detect(){
         await model.detect(
             video,
             20,
-            0.40
+            .30
         );
 
-
         ctx.clearRect(
-            0,
-            0,
+            0,0,
             canvas.width,
             canvas.height
         );
 
-
         const vehicles=
-        predictions.filter(
-            p=>
+        predictions.filter(p=>
             (
                 p.class==="car" ||
                 p.class==="truck" ||
                 p.class==="bus"
             )
             &&
-            p.score>=0.40
+            p.score>=.30
         );
 
+        /*
+        رسم جميع السيارات باللون الأصفر
+        */
+        vehicles.forEach(v=>{
+
+            const[x,y,w,h]=v.bbox;
+
+            ctx.strokeStyle="#ffd700";
+            ctx.lineWidth=3;
+
+            ctx.strokeRect(
+                x,y,w,h
+            );
+
+            ctx.font="bold 17px Arial";
+            ctx.fillStyle="#ffd700";
+
+            ctx.fillText(
+                "🚗",
+                x+4,
+                Math.max(20,y+20)
+            );
+
+        });
 
         selectedVehicle=
-        chooseVehicle(
-            vehicles
-        );
-
+        chooseVehicle(vehicles);
 
         if(selectedVehicle){
 
-            const[
-                x,y,w,h
-            ]=
+            const[x,y,w,h]=
             selectedVehicle.bbox;
-
 
             ctx.strokeStyle=
             lastMatch
             ? "#ff0000"
             : "#ffd700";
 
-
             ctx.lineWidth=6;
-
 
             ctx.strokeRect(
                 x,y,w,h
             );
-
 
             ctx.fillStyle=
             lastMatch
             ? "#ff0000"
             : "#ffd700";
 
-
-            ctx.font=
-            "bold 22px Arial";
-
+            ctx.font="bold 22px Arial";
 
             ctx.fillText(
                 lastMatch
                 ? "🚨 مطابقة"
-                : "🔎 فحص",
+                : "🔎 اشتباه",
                 x,
-                Math.max(
-                    25,
-                    y-8
-                )
+                Math.max(25,y-8)
             );
 
+            createZoom(x,y,w,h);
 
-            createZoom(
-                x,y,w,h
-            );
+            /*
+            لا نقرأ كل إطار.
+            نعيد القراءة كل 1.5 ثانية.
+            */
+            if(
+                !ocrBusy &&
+                Date.now()-lastOCRTime>1500
+            ){
 
-
-            if(!ocrBusy){
+                lastOCRTime=Date.now();
 
                 recognizePlate(
                     x,y,w,h
                 );
-
             }
 
         }else{
 
             lastMatch=false;
 
-            zoomBox.style.display=
-            "none";
+            zoomBox.style.display="none";
 
             result.innerText=
-            "لا توجد مركبة مرشحة";
+            vehicles.length
+            ? "🟨 السيارات ظاهرة — لا توجد مركبة مطابقة بعد"
+            : "جاري البحث عن السيارات...";
 
         }
 
@@ -1096,208 +804,449 @@ async function detect(){
 
     }
 
-
     detecting=false;
 
     setTimeout(
         detect,
-        180
+        120
     );
-
 }
 
 
 /* =========================
-   اختيار المركبة
+   اختيار المركبة المرشحة
 ========================= */
 
-function chooseVehicle(
-    vehicles
-){
+function chooseVehicle(vehicles){
 
-    if(
-        vehicles.length===0
-    )
+    if(!vehicles.length)
         return null;
 
-
-    const data=
-    loadTarget();
-
+    const data=loadTarget();
 
     if(!data)
         return null;
 
+    let candidates=vehicles;
 
-    let candidates=
-    vehicles;
-
-
-    /*
-    السيارة والجيب:
-    كلاهما يعتمد حاليًا على
-    فئة car في COCO-SSD.
-    */
-
-    if(
-        data.type==="car" ||
-        data.type==="suv"
-    ){
+    if(data.type==="car" || data.type==="suv"){
 
         candidates=
         vehicles.filter(
-            p=>
-            p.class==="car"
+            p=>p.class==="car"
         );
-
     }
-
 
     if(data.type==="truck"){
 
         candidates=
         vehicles.filter(
-            p=>
-            p.class==="truck"
+            p=>p.class==="truck"
         );
-
     }
-
 
     if(data.type==="bus"){
 
         candidates=
         vehicles.filter(
-            p=>
-            p.class==="bus"
+            p=>p.class==="bus"
         );
-
     }
 
-
-    if(
-        candidates.length===0
-    )
+    if(!candidates.length)
         return null;
 
-
     /*
-    نختار المركبة
-    الأكبر والأوضح
+    نختار السيارة الأكبر والأوضح
+    لأن اللوحة تكون أسهل للقراءة.
     */
 
     return candidates.reduce(
         (best,current)=>{
 
             const bestArea=
-            best.bbox[2]*
-            best.bbox[3];
+            best.bbox[2]*best.bbox[3];
 
             const currentArea=
-            current.bbox[2]*
-            current.bbox[3];
-
+            current.bbox[2]*current.bbox[3];
 
             const bestValue=
-            bestArea*
-            best.score;
-
+            bestArea*best.score;
 
             const currentValue=
-            currentArea*
-            current.score;
+            currentArea*current.score;
 
-
-            return
-            currentValue>
-            bestValue
-            ? current
-            : best;
+            return currentValue>bestValue
+            ?current
+            :best;
 
         }
     );
-
 }
 
 
 /* =========================
-   التكبير
+   Zoom
 ========================= */
 
-function createZoom(
-    x,y,w,h
-){
+function createZoom(x,y,w,h){
 
-    const padding=
-    0.25;
+    const padding=.25;
 
-
-    const sx=
-    Math.max(
+    const sx=Math.max(
         0,
         x-w*padding
     );
 
-
-    const sy=
-    Math.max(
+    const sy=Math.max(
         0,
         y-h*padding
     );
 
-
-    const sw=
-    Math.min(
+    const sw=Math.min(
         video.videoWidth-sx,
         w*(1+padding*2)
     );
 
-
-    const sh=
-    Math.min(
+    const sh=Math.min(
         video.videoHeight-sy,
         h*(1+padding*2)
     );
 
-
     const width=700;
 
-
-    const height=
-    Math.max(
+    const height=Math.max(
         300,
-        Math.round(
-            width*sh/sw
-        )
+        Math.round(width*sh/sw)
     );
 
+    zoomCanvas.width=width;
+    zoomCanvas.height=height;
 
-    zoomCanvas.width=
-    width;
-
-    zoomCanvas.height=
-    height;
-
-
-    zoomCtx.imageSmoothingEnabled=
-    true;
-
-
-    zoomCtx.imageSmoothingQuality=
-    "high";
-
+    zoomCtx.imageSmoothingEnabled=true;
+    zoomCtx.imageSmoothingQuality="high";
 
     zoomCtx.drawImage(
         video,
         sx,sy,sw,sh,
-        0,0,
-        width,height
+        0,0,width,height
     );
 
+    zoomBox.style.display="block";
+}
 
-    zoomBox.style.display=
-    "block";
 
+/* =========================
+   كشف اللوحة بواسطة YOLO
+========================= */
+
+async function detectPlateInVehicle(
+    x,y,w,h
+){
+
+    if(!plateModel)
+        return null;
+
+    /*
+    نأخذ صورة السيارة فقط.
+    */
+
+    const source=
+    document.createElement("canvas");
+
+    const sctx=
+    source.getContext("2d");
+
+    const padding=.08;
+
+    const sx=Math.max(
+        0,
+        x-w*padding
+    );
+
+    const sy=Math.max(
+        0,
+        y-h*padding
+    );
+
+    const sw=Math.min(
+        video.videoWidth-sx,
+        w*(1+padding*2)
+    );
+
+    const sh=Math.min(
+        video.videoHeight-sy,
+        h*(1+padding*2)
+    );
+
+    const inputSize=640;
+
+    source.width=inputSize;
+    source.height=inputSize;
+
+    /*
+    خلفية سوداء + resize.
+    */
+
+    sctx.fillStyle="#000";
+    sctx.fillRect(
+        0,0,
+        inputSize,
+        inputSize
+    );
+
+    const scale=
+    Math.min(
+        inputSize/sw,
+        inputSize/sh
+    );
+
+    const nw=sw*scale;
+    const nh=sh*scale;
+
+    const dx=(inputSize-nw)/2;
+    const dy=(inputSize-nh)/2;
+
+    sctx.drawImage(
+        video,
+        sx,sy,sw,sh,
+        dx,dy,nw,nh
+    );
+
+    const imageData=
+    sctx.getImageData(
+        0,0,
+        inputSize,
+        inputSize
+    );
+
+    const data=
+    new Float32Array(
+        3*inputSize*inputSize
+    );
+
+    /*
+    HWC -> CHW
+    RGB / 255
+    */
+
+    let r=0;
+    let g=inputSize*inputSize;
+    let b=g+inputSize*inputSize;
+
+    for(
+        let i=0;
+        i<imageData.data.length;
+        i+=4
+    ){
+
+        data[r++]=
+        imageData.data[i]/255;
+
+        data[g++]=
+        imageData.data[i+1]/255;
+
+        data[b++]=
+        imageData.data[i+2]/255;
+    }
+
+    const tensor=
+    new ort.Tensor(
+        "float32",
+        data,
+        [1,3,inputSize,inputSize]
+    );
+
+    const inputName=
+    plateModel.inputNames[0];
+
+    const outputs=
+    await plateModel.run({
+        [inputName]:tensor
+    });
+
+    const output=
+    outputs[
+        plateModel.outputNames[0]
+    ];
+
+    if(!output || !output.data)
+        return null;
+
+    return decodePlateOutput(
+        output,
+        sw,
+        sh,
+        dx,
+        dy,
+        nw,
+        nh,
+        sx,
+        sy
+    );
+}
+
+
+/* =========================
+   فك خرج YOLO
+========================= */
+
+function decodePlateOutput(
+    output,
+    cropW,
+    cropH,
+    dx,
+    dy,
+    nw,
+    nh,
+    sourceX,
+    sourceY
+){
+
+    const dims=
+    output.dims || [];
+
+    const values=
+    output.data;
+
+    /*
+    YOLO export المعتاد:
+    [1,5,N]
+    أو
+    [1,N,5]
+    */
+
+    if(dims.length!==3)
+        return null;
+
+    let count;
+    let channels;
+    let transposed=false;
+
+    if(dims[1]<=10){
+
+        channels=dims[1];
+        count=dims[2];
+
+    }else{
+
+        count=dims[1];
+        channels=dims[2];
+        transposed=true;
+
+    }
+
+    if(channels<5)
+        return null;
+
+    let best=null;
+
+    for(
+        let i=0;
+        i<count;
+        i++
+    ){
+
+        let cx,cy,bw,bh,score;
+
+        if(!transposed){
+
+            cx=values[i];
+            cy=values[count+i];
+            bw=values[2*count+i];
+            bh=values[3*count+i];
+
+            score=values[4*count+i];
+
+        }else{
+
+            const base=i*channels;
+
+            cx=values[base];
+            cy=values[base+1];
+            bw=values[base+2];
+            bh=values[base+3];
+
+            score=values[base+4];
+
+        }
+
+        if(score<.20)
+            continue;
+
+        /*
+        تحويل من 640 إلى
+        مساحة السيارة داخل الصورة.
+        */
+
+        const bx=
+        (cx-dx)/nw;
+
+        const by=
+        (cy-dy)/nh;
+
+        const bwNorm=
+        bw/nw;
+
+        const bhNorm=
+        bh/nh;
+
+        if(
+            bx<-.2 ||
+            by<-.2 ||
+            bx>1.2 ||
+            by>1.2
+        )
+            continue;
+
+        const px=
+        Math.max(
+            0,
+            Math.round(
+                (bx-bwNorm/2)*cropW
+            )
+        );
+
+        const py=
+        Math.max(
+            0,
+            Math.round(
+                (by-bhNorm/2)*cropH
+            )
+        );
+
+        const pw=
+        Math.min(
+            cropW-px,
+            Math.round(
+                bwNorm*cropW
+            )
+        );
+
+        const ph=
+        Math.min(
+            cropH-py,
+            Math.round(
+                bhNorm*cropH
+            )
+        );
+
+        if(pw<=5 || ph<=5)
+            continue;
+
+        const candidate={
+            x:sourceX+px,
+            y:sourceY+py,
+            w:pw,
+            h:ph,
+            score
+        };
+
+        if(!best || score>best.score)
+            best=candidate;
+    }
+
+    return best;
 }
 
 
@@ -1309,87 +1258,111 @@ async function recognizePlate(
     x,y,w,h
 ){
 
-    const data=
-    loadTarget();
-
+    const data=loadTarget();
 
     const target=
     normalize(
-        data?.plate || ""
+        data?.plate||""
     );
-
 
     if(!target)
         return;
 
-
     ocrBusy=true;
-
 
     try{
 
-        const temp=
-        document.createElement(
-            "canvas"
+        result.innerText=
+        "🔎 تحديد اللوحة وقراءة الرقم...";
+
+        /*
+        أولًا نستخدم نموذج YOLO
+        لتحديد مكان اللوحة.
+        */
+
+        const plate=
+        await detectPlateInVehicle(
+            x,y,w,h
         );
 
+        if(!plate){
+
+            result.innerHTML=
+            '<span class="yellow">🟨 مركبة قيد الفحص — لم تُحدد اللوحة بعد</span>';
+
+            return;
+        }
+
+        /*
+        رسم مربع اللوحة.
+        */
+
+        ctx.strokeStyle=
+        "#00ff66";
+
+        ctx.lineWidth=4;
+
+        ctx.strokeRect(
+            plate.x,
+            plate.y,
+            plate.w,
+            plate.h
+        );
+
+        /*
+        تكبير اللوحة أكثر.
+        */
+
+        const temp=
+        document.createElement("canvas");
 
         const tc=
         temp.getContext("2d");
 
+        const pad=.20;
 
-        const padding=
-        0.10;
-
-
-        const sx=
-        Math.max(
+        const sx=Math.max(
             0,
-            x-w*padding
+            plate.x-plate.w*pad
         );
 
-
-        const sy=
-        Math.max(
+        const sy=Math.max(
             0,
-            y-h*padding
+            plate.y-plate.h*pad
         );
 
-
-        const sw=
-        Math.min(
+        const sw=Math.min(
             video.videoWidth-sx,
-            w*(1+padding*2)
+            plate.w*(1+pad*2)
         );
 
-
-        const sh=
-        Math.min(
+        const sh=Math.min(
             video.videoHeight-sy,
-            h*(1+padding*2)
+            plate.h*(1+pad*2)
         );
 
-
-        const scale=3;
-
+        const scale=5;
 
         temp.width=
         Math.min(
-            1500,
-            Math.round(
-                sw*scale
+            1800,
+            Math.max(
+                300,
+                Math.round(sw*scale)
             )
         );
-
 
         temp.height=
         Math.min(
-            1000,
-            Math.round(
-                sh*scale
+            900,
+            Math.max(
+                120,
+                Math.round(sh*scale)
             )
         );
 
+        tc.imageSmoothingEnabled=true;
+        tc.imageSmoothingQuality="high";
 
         tc.drawImage(
             video,
@@ -1399,51 +1372,38 @@ async function recognizePlate(
             temp.height
         );
 
-
-        result.innerText=
-        "🔎 فحص المركبة وقراءة اللوحة...";
-
-
         const ocr=
         await Tesseract.recognize(
             temp,
             "eng",
             {
-                tessedit_pageseg_mode:
-                "11"
+                tessedit_pageseg_mode:"7",
+                preserve_interword_spaces:"1"
             }
         );
-
 
         const text=
         normalize(
             ocr.data.text
         );
 
-
         console.log(
-            "OCR:",
+            "Plate OCR:",
             text
         );
 
-
-        if(
-            text.includes(target)
-        ){
+        if(text.includes(target)){
 
             lastMatch=true;
 
-
             result.innerHTML=
             '<span class="red">🚨 تطابق رقم اللوحة!</span>';
-
 
             alarm();
 
         }else{
 
             lastMatch=false;
-
 
             result.innerHTML=
             '<span class="yellow">🟨 مركبة قيد الفحص</span>';
@@ -1452,13 +1412,18 @@ async function recognizePlate(
 
     }catch(e){
 
-        console.error(e);
+        console.error(
+            "Plate/OCR error:",
+            e
+        );
 
+        result.innerHTML=
+        '<span class="yellow">🟨 المركبة ظاهرة — تعذر قراءة اللوحة</span>';
+
+    }finally{
+
+        ocrBusy=false;
     }
-
-
-    ocrBusy=false;
-
 }
 
 
@@ -1474,7 +1439,6 @@ function normalize(text){
         /[^A-Z0-9]/g,
         ""
     );
-
 }
 
 
@@ -1490,32 +1454,24 @@ function saveZoom(){
     ){
 
         alert(
-        "لا توجد مركبة مكبرة حاليًا"
+            "لا توجد مركبة مكبرة حاليًا"
         );
 
         return;
-
     }
 
-
     const link=
-    document.createElement(
-        "a"
-    );
-
+    document.createElement("a");
 
     link.download=
     "vehicle-"+Date.now()+".png";
-
 
     link.href=
     zoomCanvas.toDataURL(
         "image/png"
     );
 
-
     link.click();
-
 }
 
 
@@ -1524,9 +1480,7 @@ function saveZoom(){
 ========================= */
 
 loadTarget();
-
 updateSummary();
-
 loadAI();
 
 </script>
