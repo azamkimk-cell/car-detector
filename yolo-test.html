@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>اختبار كشف السيارات</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
+
+<style>
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#000;
+    overflow:hidden;
+    font-family:Arial;
+}
+
+#video{
+    position:absolute;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+#canvas{
+    position:absolute;
+    width:100%;
+    height:100%;
+}
+
+#status{
+    position:absolute;
+    top:15px;
+    right:15px;
+    z-index:10;
+    background:rgba(0,0,0,.75);
+    color:#fff;
+    padding:12px;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<video id="video" autoplay muted playsinline></video>
+<canvas id="canvas"></canvas>
+
+<div id="status">
+جاري تحميل النموذج...
+</div>
+
+<script>
+
+let model;
+let running=false;
+
+const video=document.getElementById("video");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const status=document.getElementById("status");
+
+
+async function start(){
+
+    try{
+
+        await tf.ready();
+
+        status.innerText=
+        "جاري تحميل كاشف السيارات...";
+
+        model=
+        await cocoSsd.load();
+
+        status.innerText=
+        "تشغيل الكاميرا...";
+
+        const stream=
+        await navigator.mediaDevices.getUserMedia({
+
+            video:{
+                facingMode:{
+                    ideal:"environment"
+                },
+                width:{
+                    ideal:1920
+                },
+                height:{
+                    ideal:1080
+                }
+            },
+
+            audio:false
+        });
+
+        video.srcObject=stream;
+
+        running=true;
+
+        video.onloadedmetadata=()=>{
+
+            canvas.width=
+            video.videoWidth;
+
+            canvas.height=
+            video.videoHeight;
+
+            detect();
+
+        };
+
+    }catch(e){
+
+        console.error(e);
+
+        status.innerText=
+        "❌ خطأ: "+e.message;
+
+    }
+}
+
+
+async function detect(){
+
+    if(!running)
+        return;
+
+    try{
+
+        const predictions=
+        await model.detect(
+            video,
+            20,
+            0.20
+        );
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const vehicles=
+        predictions.filter(p=>
+            (
+                p.class==="car" ||
+                p.class==="truck" ||
+                p.class==="bus"
+            )
+            &&
+            p.score>=0.20
+        );
+
+        vehicles.forEach(p=>{
+
+            const[x,y,w,h]=p.bbox;
+
+            ctx.strokeStyle="#00ff00";
+            ctx.lineWidth=5;
+
+            ctx.strokeRect(
+                x,y,w,h
+            );
+
+            ctx.fillStyle="#00ff00";
+            ctx.font="bold 24px Arial";
+
+            ctx.fillText(
+                p.class+
+                " "+
+                Math.round(p.score*100)+
+                "%",
+                x,
+                Math.max(25,y-8)
+            );
+
+        });
+
+        status.innerText=
+        "🚗 السيارات المكتشفة: "+
+        vehicles.length;
+
+    }catch(e){
+
+        console.error(e);
+
+    }
+
+    setTimeout(
+        detect,
+        100
+    );
+}
+
+
+start();
+
+</script>
+
+</body>
+</html>
