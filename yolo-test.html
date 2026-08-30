@@ -18,6 +18,7 @@ content="width=device-width,initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.24.3/dist/ort.min.js"></script>
 
+
 <style>
 
 *{
@@ -28,19 +29,31 @@ html,
 body{
 
     margin:0;
+
     width:100%;
+
     height:100%;
 
     background:#000;
+
     color:#fff;
 
     font-family:Arial,sans-serif;
+
+}
+
+button,
+input,
+select{
+
+    font-family:Arial,sans-serif;
+
 }
 
 
-/* ==============================
+/* ==================================================
    صفحة الإعداد
-============================== */
+================================================== */
 
 #setupPage{
 
@@ -51,12 +64,13 @@ body{
     padding:18px;
 
     overflow:auto;
-}
 
+}
 
 .setupCard{
 
     width:100%;
+
     max-width:600px;
 
     margin:20px auto;
@@ -66,8 +80,10 @@ body{
     border-radius:16px;
 
     padding:20px;
-}
 
+    box-shadow:0 5px 30px rgba(0,0,0,.5);
+
+}
 
 .title{
 
@@ -78,8 +94,8 @@ body{
     font-weight:bold;
 
     margin-bottom:25px;
-}
 
+}
 
 label{
 
@@ -88,8 +104,8 @@ label{
     margin:16px 0 7px;
 
     font-weight:bold;
-}
 
+}
 
 input,
 select{
@@ -107,8 +123,10 @@ select{
     color:#111;
 
     font-size:18px;
-}
 
+    outline:none;
+
+}
 
 .saveButton{
 
@@ -129,8 +147,16 @@ select{
     font-size:18px;
 
     font-weight:bold;
+
+    cursor:pointer;
+
 }
 
+.saveButton:active{
+
+    transform:scale(.98);
+
+}
 
 .info{
 
@@ -145,12 +171,13 @@ select{
     line-height:1.8;
 
     font-size:14px;
+
 }
 
 
-/* ==============================
+/* ==================================================
    صفحة الكاميرا
-============================== */
+================================================== */
 
 #cameraPage{
 
@@ -163,8 +190,8 @@ select{
     background:#000;
 
     overflow:hidden;
-}
 
+}
 
 #video{
 
@@ -177,8 +204,8 @@ select{
     height:100%;
 
     object-fit:cover;
-}
 
+}
 
 #canvas{
 
@@ -191,12 +218,13 @@ select{
     height:100%;
 
     pointer-events:none;
+
 }
 
 
-/* ==============================
+/* ==================================================
    الشريط العلوي
-============================== */
+================================================== */
 
 .topBar{
 
@@ -208,13 +236,13 @@ select{
 
     right:0;
 
-    z-index:20;
+    z-index:50;
 
-    background:rgba(0,0,0,.80);
+    background:rgba(0,0,0,.82);
 
     padding:10px;
-}
 
+}
 
 #targetSummary{
 
@@ -223,8 +251,8 @@ select{
     font-weight:bold;
 
     line-height:1.7;
-}
 
+}
 
 .editButton{
 
@@ -241,12 +269,13 @@ select{
     color:#fff;
 
     font-weight:bold;
+
 }
 
 
-/* ==============================
+/* ==================================================
    الحالة
-============================== */
+================================================== */
 
 #status{
 
@@ -256,21 +285,22 @@ select{
 
     right:10px;
 
-    z-index:20;
+    z-index:50;
 
-    background:rgba(0,0,0,.85);
+    background:rgba(0,0,0,.82);
 
     padding:9px 13px;
 
     border-radius:20px;
 
     font-size:13px;
+
 }
 
 
-/* ==============================
+/* ==================================================
    النتيجة
-============================== */
+================================================== */
 
 #result{
 
@@ -282,7 +312,7 @@ select{
 
     bottom:15px;
 
-    z-index:30;
+    z-index:60;
 
     background:rgba(0,0,0,.88);
 
@@ -295,32 +325,39 @@ select{
     font-size:17px;
 
     font-weight:bold;
-}
 
+    line-height:1.7;
+
+}
 
 .green{
-    color:#00ff66;
-}
 
+    color:#00ff66;
+
+}
 
 .yellow{
-    color:#ffd700;
-}
 
+    color:#ffd700;
+
+}
 
 .red{
-    color:#ff2020;
-}
 
+    color:#ff2020;
+
+}
 
 .cyan{
+
     color:#00ffff;
+
 }
 
 
-/* ==============================
-   صندوق التكبير
-============================== */
+/* ==================================================
+   صندوق الزوم
+================================================== */
 
 #zoomBox{
 
@@ -332,9 +369,9 @@ select{
 
     right:5%;
 
-    bottom:75px;
+    bottom:105px;
 
-    z-index:25;
+    z-index:55;
 
     background:#000;
 
@@ -344,10 +381,9 @@ select{
 
     overflow:hidden;
 
-    box-shadow:
-    0 0 20px rgba(255,215,0,.5);
-}
+    box-shadow:0 0 25px rgba(255,215,0,.35);
 
+}
 
 .zoomTitle{
 
@@ -358,19 +394,130 @@ select{
     text-align:center;
 
     font-weight:bold;
-}
 
+}
 
 #zoomCanvas{
 
     width:100%;
 
+    max-height:38vh;
+
+    object-fit:contain;
+
     display:block;
+
+}
+
+
+/* ==================================================
+   زر إيقاف
+================================================== */
+
+.stopButton{
+
+    margin-top:6px;
+
+    margin-right:5px;
+
+    padding:8px 12px;
+
+    border:0;
+
+    border-radius:8px;
+
+    background:#444;
+
+    color:#fff;
+
+    font-weight:bold;
+
+}
+
+
+/* ==================================================
+   حالة تحميل
+================================================== */
+
+#loadingOverlay{
+
+    display:none;
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:100;
+
+    background:rgba(0,0,0,.86);
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    padding:30px;
+
+}
+
+.loadingBox{
+
+    background:#202020;
+
+    padding:25px;
+
+    border-radius:16px;
+
+    max-width:400px;
+
+    width:100%;
+
+}
+
+.loadingTitle{
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    margin-bottom:15px;
+
+}
+
+.loadingText{
+
+    font-size:14px;
+
+    line-height:1.8;
+
+}
+
+
+/* ==================================================
+   استجابة الهاتف
+================================================== */
+
+@media(max-width:600px){
+
+    .title{
+
+        font-size:21px;
+
+    }
+
+    #result{
+
+        font-size:15px;
+
+    }
+
 }
 
 </style>
 
 </head>
+
 
 <body>
 
@@ -381,142 +528,139 @@ select{
 
 <div id="setupPage">
 
-<div class="setupCard">
+    <div class="setupCard">
 
-<div class="title">
-
-🚨 مواصفات المركبة المطلوبة
-
-</div>
+        <div class="title">
+            🚨 نظام كشف المركبة المطلوبة
+        </div>
 
 
-<label>
+        <label>
+            🔢 رقم اللوحة المطلوبة
+        </label>
 
-🔢 رقم اللوحة المطلوبة
-
-</label>
-
-<input
-id="plateInput"
-type="text"
-inputmode="text"
-placeholder="مثال: 1234"
-/>
-
-
-<label>
-
-🎨 لون المركبة
-
-</label>
-
-<select id="colorInput">
-
-<option value="">
-أي لون
-</option>
-
-<option value="white">
-أبيض
-</option>
-
-<option value="black">
-أسود
-</option>
-
-<option value="red">
-أحمر
-</option>
-
-<option value="blue">
-أزرق
-</option>
-
-<option value="gray">
-رمادي
-</option>
-
-<option value="silver">
-فضي
-</option>
-
-<option value="yellow">
-أصفر
-</option>
-
-<option value="green">
-أخضر
-</option>
-
-</select>
+        <input
+            id="plateInput"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            placeholder="مثال: 1234 أو ABC123"
+        >
 
 
-<label>
+        <label>
+            🎨 لون المركبة
+        </label>
 
-🚗 نوع المركبة
+        <select id="colorInput">
 
-</label>
+            <option value="">
+                أي لون
+            </option>
 
-<select id="typeInput">
+            <option value="white">
+                أبيض
+            </option>
 
-<option value="">
-أي نوع
-</option>
+            <option value="black">
+                أسود
+            </option>
 
-<option value="car">
-🚗 سيارة
-</option>
+            <option value="red">
+                أحمر
+            </option>
 
-<option value="suv">
-🚙 جيب / SUV
-</option>
+            <option value="blue">
+                أزرق
+            </option>
 
-<option value="truck">
-🚚 شاحنة
-</option>
+            <option value="gray">
+                رمادي
+            </option>
 
-<option value="bus">
-🚌 حافلة
-</option>
+            <option value="silver">
+                فضي
+            </option>
 
-</select>
+            <option value="yellow">
+                أصفر
+            </option>
 
+            <option value="green">
+                أخضر
+            </option>
 
-<button
-class="saveButton"
-onclick="saveAndStart()"
->
-
-💾 حفظ المعلومات وبدء الكشف
-
-</button>
+        </select>
 
 
-<div class="info">
+        <label>
+            🚗 نوع المركبة
+        </label>
 
-<b>طريقة النظام:</b>
+        <select id="typeInput">
 
-<br><br>
+            <option value="">
+                أي نوع
+            </option>
 
-🟢 جميع المركبات المكتشفة تظهر بالأخضر.
+            <option value="car">
+                🚗 سيارة
+            </option>
 
-<br><br>
+            <option value="suv">
+                🚙 جيب / SUV
+            </option>
 
-🟨 عند الاشتباه بمركبة يتم تمييزها بالأصفر
-ويظهر التكبير.
+            <option value="truck">
+                🚚 شاحنة
+            </option>
 
-<br><br>
+            <option value="bus">
+                🚌 حافلة
+            </option>
 
-🔴 عند تأكيد تطابق اللوحة تتحول المركبة
-إلى الأحمر ويصدر الإنذار.
+        </select>
 
-<br><br>
 
-السيارات الأخرى تبقى خضراء.
+        <button
+            class="saveButton"
+            onclick="saveAndStart()"
+        >
+            💾 حفظ وبدء الكشف
+        </button>
 
-</div>
 
-</div>
+        <div class="info">
+
+            <b>طريقة النظام:</b>
+
+            <br><br>
+
+            🟢 جميع المركبات المكتشفة تظهر بالأخضر.
+
+            <br><br>
+
+            🟨 عند اختيار مركبة للفحص يتم تمييزها
+            بالأصفر ويظهر التكبير.
+
+            <br><br>
+
+            🔴 إذا تمت مطابقة رقم اللوحة المطلوبة،
+            تتحول المركبة إلى الأحمر ويصدر الإنذار.
+
+            <br><br>
+
+            🔄 إذا لم تكن اللوحة واضحة،
+            يعيد النظام المحاولة تلقائيًا.
+
+            <br><br>
+
+            ⚠️ دقة القراءة تعتمد على قرب اللوحة
+            ووضوحها والإضاءة.
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -528,68 +672,85 @@ onclick="saveAndStart()"
 <div id="cameraPage">
 
 
-<video
-id="video"
-autoplay
-muted
-playsinline
-></video>
+    <video
+        id="video"
+        autoplay
+        muted
+        playsinline
+    ></video>
 
 
-<canvas
-id="canvas"
-></canvas>
+    <canvas
+        id="canvas"
+    ></canvas>
 
 
-<div class="topBar">
+    <div class="topBar">
 
-<div id="targetSummary">
-
-🎯 لا توجد مواصفات
-
-</div>
+        <div id="targetSummary">
+            🎯 لا توجد مواصفات
+        </div>
 
 
-<button
-class="editButton"
-onclick="showSetup()"
->
-
-⚙️ تعديل المواصفات
-
-</button>
-
-</div>
+        <button
+            class="editButton"
+            onclick="showSetup()"
+        >
+            ⚙️ تعديل المواصفات
+        </button>
 
 
-<div id="status">
+        <button
+            class="stopButton"
+            onclick="stopCamera();showSetup();"
+        >
+            ⏹ إيقاف
+        </button>
 
-جاري التحميل...
-
-</div>
-
-
-<div id="zoomBox">
-
-<div class="zoomTitle">
-
-🔎 المركبة قيد الاشتباه
-
-</div>
+    </div>
 
 
-<canvas
-id="zoomCanvas"
-></canvas>
-
-</div>
+    <div id="status">
+        جاري التحميل...
+    </div>
 
 
-<div id="result">
+    <div id="zoomBox">
 
-انتظار الكاميرا...
+        <div class="zoomTitle">
+            🔎 المركبة قيد الاشتباه والفحص
+        </div>
 
-</div>
+        <canvas
+            id="zoomCanvas"
+        ></canvas>
+
+    </div>
+
+
+    <div id="result">
+        انتظار الكاميرا...
+    </div>
+
+
+    <div id="loadingOverlay">
+
+        <div class="loadingBox">
+
+            <div class="loadingTitle">
+                🤖 تجهيز نظام الذكاء الاصطناعي
+            </div>
+
+            <div
+                id="loadingText"
+                class="loadingText"
+            >
+                جاري تحميل النماذج...
+            </div>
+
+        </div>
+
+    </div>
 
 
 </div>
@@ -598,7 +759,7 @@ id="zoomCanvas"
 <script>
 
 /* ==================================================
-   المتغيرات
+   المتغيرات الأساسية
 ================================================== */
 
 let carModel = null;
@@ -610,6 +771,10 @@ let running = false;
 let detecting = false;
 
 let ocrBusy = false;
+
+let modelsLoading = false;
+
+let modelsReady = false;
 
 let targetData = null;
 
@@ -627,6 +792,27 @@ let lastMatch = false;
 
 let audioContext = null;
 
+let matchVehicle = null;
+
+let matchUntil = 0;
+
+let scanFailures = 0;
+
+
+/* ==================================================
+   إعدادات النظام
+================================================== */
+
+const DETECTION_INTERVAL = 180;
+
+const PLATE_SCAN_INTERVAL = 2500;
+
+const VEHICLE_LOCK_DISTANCE = 300;
+
+const PLATE_CONFIDENCE = 0.20;
+
+const MATCH_DISPLAY_TIME = 6000;
+
 
 /* ==================================================
    نموذج اللوحة
@@ -637,7 +823,7 @@ const PLATE_MODEL_URL =
 
 
 /* ==================================================
-   العناصر
+   عناصر الصفحة
 ================================================== */
 
 const video =
@@ -672,6 +858,12 @@ document.getElementById("targetSummary");
 
 const zoomBox =
 document.getElementById("zoomBox");
+
+const loadingOverlay =
+document.getElementById("loadingOverlay");
+
+const loadingText =
+document.getElementById("loadingText");
 
 
 /* ==================================================
@@ -712,6 +904,7 @@ function saveAndStart(){
         );
 
         return;
+
     }
 
 
@@ -723,19 +916,24 @@ function saveAndStart(){
 
     targetData = data;
 
-
     updateTargetSummary();
 
 
     setupPage.style.display =
     "none";
 
-
     cameraPage.style.display =
     "block";
 
 
+    /*
+    نبدأ الكاميرا،
+    لكن الكشف لن يبدأ قبل
+    اكتمال النماذج.
+    */
+
     startCamera();
+
 }
 
 
@@ -751,8 +949,15 @@ function loadTarget(){
     );
 
 
-    if(!saved)
+    if(!saved){
+
+        targetData = null;
+
+        updateTargetSummary();
+
         return null;
+
+    }
 
 
     try{
@@ -789,10 +994,15 @@ function loadTarget(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Target load error:",
+            error
+        );
 
         return null;
+
     }
+
 }
 
 
@@ -808,6 +1018,7 @@ function updateTargetSummary(){
         "🎯 لا توجد مواصفات";
 
         return;
+
     }
 
 
@@ -845,7 +1056,7 @@ function updateTargetSummary(){
     };
 
 
-    let parts = [];
+    const parts = [];
 
 
     if(targetData.plate){
@@ -863,9 +1074,7 @@ function updateTargetSummary(){
         parts.push(
             "لون: " +
             (
-                colors[
-                    targetData.color
-                ] ||
+                colors[targetData.color] ||
                 targetData.color
             )
         );
@@ -878,9 +1087,7 @@ function updateTargetSummary(){
         parts.push(
             "نوع: " +
             (
-                types[
-                    targetData.type
-                ] ||
+                types[targetData.type] ||
                 targetData.type
             )
         );
@@ -891,6 +1098,7 @@ function updateTargetSummary(){
     targetSummary.innerText =
     "🎯 المطلوب: " +
     parts.join(" | ");
+
 }
 
 
@@ -924,9 +1132,13 @@ function initAudio(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Audio error:",
+            error
+        );
 
     }
+
 }
 
 
@@ -943,8 +1155,11 @@ function alarm(){
     if(
         now - lastAlarm <
         4000
-    )
+    ){
+
         return;
+
+    }
 
 
     lastAlarm =
@@ -982,7 +1197,7 @@ function alarm(){
 
 
         oscillator.frequency.value =
-        1000;
+        1100;
 
 
         gain.gain.value =
@@ -995,7 +1210,7 @@ function alarm(){
         setTimeout(
             ()=>{
                 oscillator.frequency.value =
-                700;
+                750;
             },
             180
         );
@@ -1005,15 +1220,19 @@ function alarm(){
             ()=>{
                 oscillator.stop();
             },
-            700
+            750
         );
 
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Alarm error:",
+            error
+        );
 
     }
+
 }
 
 
@@ -1023,10 +1242,35 @@ function alarm(){
 
 async function loadModels(){
 
+    if(modelsReady)
+        return true;
+
+
+    if(modelsLoading)
+        return false;
+
+
+    modelsLoading = true;
+
+
+    loadingOverlay.style.display =
+    "flex";
+
+
     try{
 
+        /*
+        ==============================================
+        تحميل COCO-SSD
+        ==============================================
+        */
+
+        loadingText.innerText =
+        "🚗 جاري تحميل كاشف المركبات...";
+
+
         status.innerText =
-        "جاري تحميل كاشف السيارات...";
+        "جاري تحميل كاشف المركبات...";
 
 
         await tf.ready();
@@ -1036,77 +1280,131 @@ async function loadModels(){
         await cocoSsd.load();
 
 
+        if(!carModel){
+
+            throw new Error(
+                "تعذر تحميل كاشف المركبات"
+            );
+
+        }
+
+
+        /*
+        ==============================================
+        تحميل نموذج اللوحات
+        ==============================================
+        */
+
+        loadingText.innerText =
+        "🔎 جاري تحميل نموذج كشف اللوحات...";
+
+
         status.innerText =
         "جاري تحميل نموذج اللوحات...";
 
 
-        try{
+        plateModel =
+        await ort.InferenceSession.create(
+            PLATE_MODEL_URL,
+            {
 
-            plateModel =
-            await ort.InferenceSession.create(
-                PLATE_MODEL_URL,
-                {
-                    executionProviders:[
-                        "wasm"
-                    ],
+                executionProviders:[
+                    "wasm"
+                ],
 
-                    graphOptimizationLevel:
-                    "all"
-                }
+                graphOptimizationLevel:
+                "all"
+
+            }
+        );
+
+
+        if(!plateModel){
+
+            throw new Error(
+                "تعذر تحميل نموذج اللوحات"
             );
-
-
-            console.log(
-                "Plate model loaded"
-            );
-
-
-            console.log(
-                "Inputs:",
-                plateModel.inputNames
-            );
-
-
-            console.log(
-                "Outputs:",
-                plateModel.outputNames
-            );
-
-
-            status.innerText =
-            "✅ جميع النماذج جاهزة";
-
-
-        }catch(error){
-
-            console.error(
-                "Plate model error:",
-                error
-            );
-
-
-            plateModel =
-            null;
-
-
-            status.innerText =
-            "⚠️ كاشف السيارات جاهز فقط";
 
         }
 
-    }catch(error){
 
-        console.error(error);
+        console.log(
+            "Plate input names:",
+            plateModel.inputNames
+        );
+
+
+        console.log(
+            "Plate output names:",
+            plateModel.outputNames
+        );
+
+
+        modelsReady =
+        true;
 
 
         status.innerText =
-        "❌ فشل تحميل الذكاء الاصطناعي";
+        "🟢 جميع النماذج جاهزة";
 
 
-        result.innerText =
-        error.message;
+        loadingText.innerText =
+        "✅ تم تجهيز النظام بنجاح";
+
+
+        setTimeout(
+            ()=>{
+                loadingOverlay.style.display =
+                "none";
+            },
+            700
+        );
+
+
+        return true;
+
+
+    }catch(error){
+
+        console.error(
+            "Model loading error:",
+            error
+        );
+
+
+        modelsReady =
+        false;
+
+
+        loadingOverlay.style.display =
+        "none";
+
+
+        status.innerText =
+        "❌ فشل تحميل أحد النماذج";
+
+
+        result.innerHTML =
+        '<span class="yellow">⚠️ تعذر تحميل نموذج الذكاء الاصطناعي</span>' +
+        '<br>' +
+        '<small>' +
+        (
+            error.message ||
+            "خطأ غير معروف"
+        ) +
+        '</small>';
+
+
+        return false;
+
+
+    }finally{
+
+        modelsLoading =
+        false;
 
     }
+
 }
 
 
@@ -1126,8 +1424,14 @@ async function startCamera(){
 
 
         status.innerText =
-        "جاري تشغيل الكاميرا...";
+        "📷 جاري تشغيل الكاميرا...";
 
+
+        /*
+        ==============================================
+        تشغيل الكاميرا
+        ==============================================
+        */
 
         const stream =
         await navigator
@@ -1146,6 +1450,11 @@ async function startCamera(){
 
                 height:{
                     ideal:1080
+                },
+
+                frameRate:{
+                    ideal:30,
+                    max:30
                 }
 
             },
@@ -1164,38 +1473,109 @@ async function startCamera(){
 
 
         status.innerText =
-        "🟢 الكاميرا تعمل";
+        "🟢 الكاميرا تعمل — تجهيز الذكاء الاصطناعي";
 
 
-        video.onloadedmetadata =
-        ()=>{
+        /*
+        ==============================================
+        انتظار الفيديو
+        ==============================================
+        */
 
-            canvas.width =
-            video.videoWidth;
+        await new Promise(
+            resolve=>{
+
+                if(
+                    video.readyState >= 2
+                ){
+
+                    resolve();
+
+                    return;
+
+                }
 
 
-            canvas.height =
-            video.videoHeight;
+                video.onloadedmetadata =
+                ()=>{
+                    resolve();
+                };
+
+            }
+        );
 
 
-            detectCars();
+        canvas.width =
+        video.videoWidth ||
+        1280;
 
-        };
+
+        canvas.height =
+        video.videoHeight ||
+        720;
+
+
+        /*
+        ==============================================
+        تحميل النماذج قبل بدء الكشف
+        ==============================================
+        */
+
+        const ready =
+        await loadModels();
+
+
+        if(!ready){
+
+            result.innerHTML =
+            '<span class="yellow">⚠️ النظام لم يكتمل تحميله</span>';
+
+            return;
+
+        }
+
+
+        if(!running)
+            return;
+
+
+        status.innerText =
+        "🟢 النظام جاهز — جاري البحث عن المركبات";
+
+
+        result.innerHTML =
+        '<span class="green">🟢 جاري البحث عن المركبات...</span>';
+
+
+        detectCars();
 
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Camera error:",
+            error
+        );
+
+
+        running =
+        false;
 
 
         status.innerText =
         "❌ تعذر تشغيل الكاميرا";
 
 
-        result.innerText =
-        error.message;
+        result.innerHTML =
+        '<span class="red">❌ تعذر تشغيل الكاميرا</span>' +
+        '<br>' +
+        (
+            error.message ||
+            ""
+        );
 
     }
+
 }
 
 
@@ -1208,29 +1588,29 @@ function stopCamera(){
     running =
     false;
 
-
     detecting =
     false;
-
 
     ocrBusy =
     false;
 
-
     selectedCar =
     null;
-
 
     lockedVehicle =
     null;
 
-
     lastVehicleCenter =
     null;
 
-
     lastMatch =
     false;
+
+    matchVehicle =
+    null;
+
+    matchUntil =
+    0;
 
 
     if(video.srcObject){
@@ -1260,11 +1640,12 @@ function stopCamera(){
 
     zoomBox.style.display =
     "none";
+
 }
 
 
 /* ==================================================
-   مركز السيارة
+   مركز المركبة
 ================================================== */
 
 function vehicleCenter(vehicle){
@@ -1287,6 +1668,7 @@ function vehicleCenter(vehicle){
         y + h / 2
 
     };
+
 }
 
 
@@ -1315,6 +1697,7 @@ function distance(a,b){
         )
 
     );
+
 }
 
 
@@ -1329,12 +1712,18 @@ function chooseBestVehicle(
     if(
         !vehicles ||
         !vehicles.length
-    )
+    ){
+
         return null;
+
+    }
 
 
     /*
-    الحفاظ على السيارة السابقة
+    ==============================================
+    إذا توجد مركبة مقفلة سابقًا
+    نحاول الحفاظ عليها
+    ==============================================
     */
 
     if(lockedVehicle){
@@ -1372,12 +1761,12 @@ function chooseBestVehicle(
                 if(
                     d <
                     closestDistance &&
-                    d < 300
+                    d <
+                    VEHICLE_LOCK_DISTANCE
                 ){
 
                     closest =
                     vehicle;
-
 
                     closestDistance =
                     d;
@@ -1408,7 +1797,9 @@ function chooseBestVehicle(
 
 
     /*
-    حساب النقاط
+    ==============================================
+    اختيار المركبة الأنسب
+    ==============================================
     */
 
     const scored =
@@ -1421,9 +1812,12 @@ function chooseBestVehicle(
 
 
             let score =
-            vehicle.score *
-            100;
+            vehicle.score * 100;
 
+
+            /*
+            أفضلية بسيطة للمركبة الأكبر
+            */
 
             score +=
             Math.min(
@@ -1433,24 +1827,18 @@ function chooseBestVehicle(
 
 
             /*
-            مطابقة النوع
+            النوع المطلوب
             */
 
-            if(
-                targetData?.type
-            ){
+            if(targetData?.type){
 
                 if(
                     (
-                        targetData.type ===
-                        "car" ||
-
-                        targetData.type ===
-                        "suv"
+                        targetData.type === "car" ||
+                        targetData.type === "suv"
                     )
                     &&
-                    vehicle.class ===
-                    "car"
+                    vehicle.class === "car"
                 ){
 
                     score +=
@@ -1466,6 +1854,49 @@ function chooseBestVehicle(
 
                     score +=
                     40;
+
+                }
+
+            }
+
+
+            /*
+            الحفاظ على نفس الموقع
+            */
+
+            if(lastVehicleCenter){
+
+                const center =
+                vehicleCenter(
+                    vehicle
+                );
+
+
+                const d =
+                distance(
+                    center,
+                    lastVehicleCenter
+                );
+
+
+                if(d < 80){
+
+                    score +=
+                    20;
+
+                }
+
+                else if(d < 160){
+
+                    score +=
+                    12;
+
+                }
+
+                else if(d < 250){
+
+                    score +=
+                    5;
 
                 }
 
@@ -1504,6 +1935,10 @@ function chooseBestVehicle(
         best;
 
 
+        lockedSince =
+        Date.now();
+
+
         lastVehicleCenter =
         vehicleCenter(
             best
@@ -1513,11 +1948,136 @@ function chooseBestVehicle(
 
 
     return best;
+
 }
 
 
 /* ==================================================
-   كشف السيارات
+   رسم جميع المركبات
+================================================== */
+
+function drawVehicles(
+    vehicles
+){
+
+    vehicles.forEach(
+        vehicle=>{
+
+            const [
+                x,
+                y,
+                w,
+                h
+            ] =
+            vehicle.bbox;
+
+
+            /*
+            الوضع الطبيعي دائمًا أخضر
+            */
+
+            let strokeColor =
+            "#00ff66";
+
+
+            let lineWidth =
+            4;
+
+
+            let label =
+            "🚗 مركبة";
+
+
+            /*
+            ==========================================
+            الاشتباه:
+            فقط السيارة التي يتم فحصها
+            ==========================================
+            */
+
+            if(
+                vehicle === selectedCar &&
+                ocrBusy &&
+                !lastMatch
+            ){
+
+                strokeColor =
+                "#ffd700";
+
+                lineWidth =
+                6;
+
+                label =
+                "🔎 اشتباه";
+
+            }
+
+
+            /*
+            ==========================================
+            المطابقة:
+            فقط المركبة المطابقة
+            ==========================================
+            */
+
+            if(
+                vehicle === matchVehicle &&
+                Date.now() < matchUntil
+            ){
+
+                strokeColor =
+                "#ff2020";
+
+                lineWidth =
+                7;
+
+                label =
+                "🚨 مطابقة";
+
+            }
+
+
+            ctx.strokeStyle =
+            strokeColor;
+
+
+            ctx.lineWidth =
+            lineWidth;
+
+
+            ctx.strokeRect(
+                x,
+                y,
+                w,
+                h
+            );
+
+
+            ctx.fillStyle =
+            strokeColor;
+
+
+            ctx.font =
+            "bold 19px Arial";
+
+
+            ctx.fillText(
+                label,
+                x,
+                Math.max(
+                    25,
+                    y - 8
+                )
+            );
+
+        }
+    );
+
+}
+
+
+/* ==================================================
+   كشف المركبات
 ================================================== */
 
 async function detectCars(){
@@ -1526,11 +2086,35 @@ async function detectCars(){
         return;
 
 
+    if(!modelsReady){
+
+        setTimeout(
+            detectCars,
+            500
+        );
+
+        return;
+
+    }
+
+
+    if(!carModel){
+
+        setTimeout(
+            detectCars,
+            500
+        );
+
+        return;
+
+    }
+
+
     if(detecting){
 
         setTimeout(
             detectCars,
-            150
+            DETECTION_INTERVAL
         );
 
         return;
@@ -1545,23 +2129,10 @@ async function detectCars(){
     try{
 
         /*
-        لا نبدأ قبل تحميل النموذج
+        ==============================================
+        كشف المركبات
+        ==============================================
         */
-
-        if(!carModel){
-
-            detecting =
-            false;
-
-            setTimeout(
-                detectCars,
-                300
-            );
-
-            return;
-
-        }
-
 
         const predictions =
         await carModel.detect(
@@ -1571,6 +2142,12 @@ async function detectCars(){
         );
 
 
+        /*
+        ==============================================
+        تنظيف الرسم
+        ==============================================
+        */
+
         ctx.clearRect(
             0,
             0,
@@ -1579,22 +2156,22 @@ async function detectCars(){
         );
 
 
+        /*
+        ==============================================
+        اختيار المركبات
+        ==============================================
+        */
+
         const vehicles =
         predictions.filter(
             item=>
             (
-                item.class ===
-                "car" ||
-
-                item.class ===
-                "truck" ||
-
-                item.class ===
-                "bus"
+                item.class === "car" ||
+                item.class === "truck" ||
+                item.class === "bus"
             )
             &&
-            item.score >=
-            .30
+            item.score >= .30
         );
 
 
@@ -1606,191 +2183,18 @@ async function detectCars(){
 
         /*
         ==============================================
-        رسم جميع المركبات
+        رسم جميع السيارات
         ==============================================
         */
 
-        vehicles.forEach(
-            vehicle=>{
-
-                const [
-                    x,
-                    y,
-                    w,
-                    h
-                ] =
-                vehicle.bbox;
-
-
-                /*
-                الافتراضي:
-                أخضر
-                */
-
-                let color =
-                "#00ff66";
-
-
-                let width =
-                4;
-
-
-                let label =
-                "🚗 مركبة";
-
-
-                /*
-                الشاحنة
-                */
-
-                if(
-                    vehicle.class ===
-                    "truck"
-                ){
-
-                    label =
-                    "🚚 شاحنة";
-
-                }
-
-
-                /*
-                الحافلة
-                */
-
-                if(
-                    vehicle.class ===
-                    "bus"
-                ){
-
-                    label =
-                    "🚌 حافلة";
-
-                }
-
-
-                /*
-                ======================================
-                الاشتباه
-                ======================================
-                */
-
-                if(
-                    vehicle ===
-                    selectedCar &&
-                    ocrBusy &&
-                    !lastMatch
-                ){
-
-                    color =
-                    "#ffd700";
-
-
-                    width =
-                    6;
-
-
-                    label =
-                    "🔎 اشتباه";
-
-                }
-
-
-                /*
-                ======================================
-                المطابقة
-                ======================================
-                */
-
-                if(
-                    vehicle ===
-                    selectedCar &&
-                    lastMatch
-                ){
-
-                    color =
-                    "#ff2020";
-
-
-                    width =
-                    7;
-
-
-                    label =
-                    "🚨 مطابقة";
-
-                }
-
-
-                /*
-                رسم المربع
-                */
-
-                ctx.strokeStyle =
-                color;
-
-
-                ctx.lineWidth =
-                width;
-
-
-                ctx.strokeRect(
-                    x,
-                    y,
-                    w,
-                    h
-                );
-
-
-                /*
-                خلفية النص
-                */
-
-                ctx.font =
-                "bold 19px Arial";
-
-
-                const textWidth =
-                ctx.measureText(
-                    label
-                ).width;
-
-
-                ctx.fillStyle =
-                color;
-
-
-                ctx.fillRect(
-                    x,
-                    Math.max(
-                        0,
-                        y - 28
-                    ),
-                    textWidth + 14,
-                    27
-                );
-
-
-                ctx.fillStyle =
-                "#000";
-
-
-                ctx.fillText(
-                    label,
-                    x + 7,
-                    Math.max(
-                        20,
-                        y - 8
-                    )
-                );
-
-            }
+        drawVehicles(
+            vehicles
         );
 
 
         /*
         ==============================================
-        المركبة المختارة
+        معالجة المركبة المرشحة
         ==============================================
         */
 
@@ -1806,32 +2210,30 @@ async function detectCars(){
 
 
             /*
-            الزوم يظهر فقط
-            أثناء الاشتباه أو المطابقة
+            ==========================================
+            إذا كانت هناك مطابقة
+            ==========================================
             */
 
             if(
-                ocrBusy ||
-                lastMatch
+                lastMatch &&
+                matchVehicle
             ){
 
                 createZoom(
-                    x,
-                    y,
-                    w,
-                    h
+                    matchVehicle.bbox[0],
+                    matchVehicle.bbox[1],
+                    matchVehicle.bbox[2],
+                    matchVehicle.bbox[3]
                 );
-
-            }else{
-
-                zoomBox.style.display =
-                "none";
 
             }
 
 
             /*
-            بدء فحص اللوحة
+            ==========================================
+            فحص اللوحة
+            ==========================================
             */
 
             if(
@@ -1839,7 +2241,7 @@ async function detectCars(){
                 !ocrBusy &&
                 Date.now() -
                 lastPlateScan >
-                2500
+                PLATE_SCAN_INTERVAL
             ){
 
                 lastPlateScan =
@@ -1854,31 +2256,68 @@ async function detectCars(){
 
 
             /*
-            نموذج اللوحة غير جاهز
+            إذا لا يوجد نموذج لوحة
             */
 
             if(!plateModel){
 
                 result.innerHTML =
-                '<span class="green">' +
-                '🟢 مركبة مكتشفة — ' +
-                'نموذج اللوحة غير جاهز' +
-                '</span>';
+                '<span class="green">🟢 مركبات مكتشفة</span>' +
+                '<br>' +
+                '<span class="yellow">⚠️ نموذج اللوحة غير جاهز</span>';
 
             }
 
+
         }else{
+
+            /*
+            ==========================================
+            لا توجد مركبات
+            ==========================================
+            */
+
+            if(
+                !lastMatch ||
+                Date.now() >
+                matchUntil
+            ){
+
+                zoomBox.style.display =
+                "none";
+
+            }
+
+
+            result.innerHTML =
+            '<span class="green">🟢 جاري البحث عن المركبات...</span>';
+
+        }
+
+
+        /*
+        ==============================================
+        انتهاء وقت المطابقة
+        ==============================================
+        */
+
+        if(
+            lastMatch &&
+            Date.now() >
+            matchUntil
+        ){
+
+            lastMatch =
+            false;
+
+            matchVehicle =
+            null;
 
             zoomBox.style.display =
             "none";
 
-
-            result.innerHTML =
-            '<span class="green">' +
-            '🟢 جاري البحث عن المركبات...' +
-            '</span>';
-
         }
+
 
     }catch(error){
 
@@ -1898,7 +2337,7 @@ async function detectCars(){
 
         setTimeout(
             detectCars,
-            180
+            DETECTION_INTERVAL
         );
 
     }
@@ -1907,25 +2346,19 @@ async function detectCars(){
 
 
 /* ==================================================
-   فحص المركبة
+   فحص المركبة واللوحة
 ================================================== */
 
-async function inspectVehicle(vehicle){
+async function inspectVehicle(
+    vehicle
+){
 
     if(!vehicle)
         return;
 
 
-    if(!plateModel){
-
-        result.innerHTML =
-        '<span class="yellow">' +
-        '⚠️ نموذج اللوحة غير محمل' +
-        '</span>';
-
+    if(!plateModel)
         return;
-
-    }
 
 
     if(ocrBusy)
@@ -1940,13 +2373,21 @@ async function inspectVehicle(vehicle){
     false;
 
 
+    selectedCar =
+    vehicle;
+
+
     try{
 
         result.innerHTML =
-        '<span class="yellow">' +
-        '🔎 جاري تحديد لوحة المركبة...' +
-        '</span>';
+        '<span class="yellow">🔎 اشتباه — جاري تحديد لوحة المركبة...</span>';
 
+
+        /*
+        ==============================================
+        إحداثيات المركبة
+        ==============================================
+        */
 
         const [
             x,
@@ -1959,7 +2400,7 @@ async function inspectVehicle(vehicle){
 
         /*
         ==============================================
-        قص المركبة
+        أخذ منطقة المركبة
         ==============================================
         */
 
@@ -1996,18 +2437,34 @@ async function inspectVehicle(vehicle){
         const sw =
         Math.min(
             video.videoWidth - sx,
-            w *
-            (1 + padding * 2)
+            w * (1 + padding * 2)
         );
 
 
         const sh =
         Math.min(
             video.videoHeight - sy,
-            h *
-            (1 + padding * 2)
+            h * (1 + padding * 2)
         );
 
+
+        if(
+            sw <= 10 ||
+            sh <= 10
+        ){
+
+            throw new Error(
+                "منطقة المركبة صغيرة جدًا"
+            );
+
+        }
+
+
+        /*
+        ==============================================
+        حجم إدخال YOLO
+        ==============================================
+        */
 
         const inputSize =
         640;
@@ -2021,6 +2478,10 @@ async function inspectVehicle(vehicle){
         inputSize;
 
 
+        /*
+        خلفية سوداء
+        */
+
         sctx.fillStyle =
         "#000";
 
@@ -2032,6 +2493,12 @@ async function inspectVehicle(vehicle){
             inputSize
         );
 
+
+        /*
+        ==============================================
+        الحفاظ على نسبة الصورة
+        ==============================================
+        */
 
         const scale =
         Math.min(
@@ -2049,13 +2516,11 @@ async function inspectVehicle(vehicle){
 
 
         const dx =
-        (inputSize - nw) /
-        2;
+        (inputSize - nw) / 2;
 
 
         const dy =
-        (inputSize - nh) /
-        2;
+        (inputSize - nh) / 2;
 
 
         sctx.drawImage(
@@ -2073,7 +2538,7 @@ async function inspectVehicle(vehicle){
 
         /*
         ==============================================
-        Tensor
+        تحويل RGB إلى CHW
         ==============================================
         */
 
@@ -2093,16 +2558,20 @@ async function inspectVehicle(vehicle){
 
         const data =
         new Float32Array(
-            3 *
-            plane
+            3 * plane
         );
 
 
-        let r = 0;
+        let rIndex =
+        0;
 
-        let g = plane;
 
-        let b = plane * 2;
+        let gIndex =
+        plane;
+
+
+        let bIndex =
+        plane * 2;
 
 
         for(
@@ -2112,17 +2581,17 @@ async function inspectVehicle(vehicle){
             i += 4
         ){
 
-            data[r++] =
+            data[rIndex++] =
             imageData.data[i] /
             255;
 
 
-            data[g++] =
+            data[gIndex++] =
             imageData.data[i + 1] /
             255;
 
 
-            data[b++] =
+            data[bIndex++] =
             imageData.data[i + 2] /
             255;
 
@@ -2176,10 +2645,11 @@ async function inspectVehicle(vehicle){
             !output.data
         ){
 
+            scanFailures++;
+
+
             result.innerHTML =
-            '<span class="yellow">' +
-            '🟨 لم يتم تحديد اللوحة' +
-            '</span>';
+            '<span class="yellow">🟨 اشتباه — لم يتم تحديد اللوحة، إعادة المحاولة...</span>';
 
             return;
 
@@ -2194,7 +2664,7 @@ async function inspectVehicle(vehicle){
 
         /*
         ==============================================
-        فك نتيجة YOLO
+        فك نتيجة النموذج
         ==============================================
         */
 
@@ -2214,11 +2684,11 @@ async function inspectVehicle(vehicle){
 
         if(!plate){
 
+            scanFailures++;
+
+
             result.innerHTML =
-            '<span class="yellow">' +
-            '🟨 مركبة قيد الاشتباه — ' +
-            'لم يتم تحديد اللوحة' +
-            '</span>';
+            '<span class="yellow">🟨 اشتباه — لم يتم العثور على اللوحة، إعادة المحاولة...</span>';
 
             return;
 
@@ -2226,7 +2696,9 @@ async function inspectVehicle(vehicle){
 
 
         /*
-        مربع اللوحة
+        ==============================================
+        رسم مربع اللوحة
+        ==============================================
         */
 
         ctx.strokeStyle =
@@ -2247,14 +2719,12 @@ async function inspectVehicle(vehicle){
 
         /*
         ==============================================
-        OCR
+        قراءة اللوحة
         ==============================================
         */
 
         result.innerHTML =
-        '<span class="yellow">' +
-        '🔤 جاري قراءة رقم اللوحة...' +
-        '</span>';
+        '<span class="yellow">🔤 جاري قراءة رقم اللوحة...</span>';
 
 
         const text =
@@ -2267,7 +2737,9 @@ async function inspectVehicle(vehicle){
 
 
         /*
+        ==============================================
         تنظيف الرقم
+        ==============================================
         */
 
         const detectedPlate =
@@ -2276,8 +2748,7 @@ async function inspectVehicle(vehicle){
 
         const targetPlate =
         normalize(
-            targetData?.plate ||
-            ""
+            targetData?.plate || ""
         );
 
 
@@ -2293,45 +2764,79 @@ async function inspectVehicle(vehicle){
         );
 
 
+        console.log(
+            "الرقم المطلوب:",
+            targetPlate
+        );
+
+
         /*
         ==============================================
-        المطابقة
+        مطابقة اللوحة
         ==============================================
         */
 
         if(
             targetPlate &&
-            detectedPlate.includes(
+            detectedPlate &&
+            isPlateMatch(
+                detectedPlate,
                 targetPlate
             )
         ){
+
+            /*
+            ==========================================
+            MATCH
+            ==========================================
+            */
 
             lastMatch =
             true;
 
 
+            matchVehicle =
+            vehicle;
+
+
+            matchUntil =
+            Date.now() +
+            MATCH_DISPLAY_TIME;
+
+
             result.innerHTML =
-            '<span class="red">' +
-            '🚨🚨 السيارة المطلوبة! 🚨🚨' +
-            '</span>' +
-            '<br><br>' +
+            '<span class="red">🚨🚨 السيارة المطلوبة! 🚨🚨</span>' +
+            '<br>' +
             '🔢 اللوحة: ' +
             detectedPlate;
 
 
+            createZoom(
+                x,
+                y,
+                w,
+                h
+            );
+
+
             alarm();
 
+
         }else{
+
+            /*
+            ==========================================
+            لا توجد مطابقة
+            ==========================================
+            */
 
             lastMatch =
             false;
 
 
             result.innerHTML =
-            '<span class="yellow">' +
-            '🟨 مركبة قيد الاشتباه' +
-            '</span>' +
-            '<br><br>' +
+            '<span class="yellow">🟨 مركبة قيد الاشتباه</span>' +
+            '<br>' +
             '🔢 اللوحة المقروءة: ' +
             (
                 detectedPlate ||
@@ -2339,6 +2844,7 @@ async function inspectVehicle(vehicle){
             );
 
         }
+
 
     }catch(error){
 
@@ -2353,10 +2859,7 @@ async function inspectVehicle(vehicle){
 
 
         result.innerHTML =
-        '<span class="yellow">' +
-        '🟨 تعذر قراءة اللوحة — ' +
-        'ستتم إعادة المحاولة' +
-        '</span>';
+        '<span class="yellow">🟨 تعذر قراءة اللوحة — ستتم إعادة المحاولة</span>';
 
     }finally{
 
@@ -2369,7 +2872,7 @@ async function inspectVehicle(vehicle){
 
 
 /* ==================================================
-   فك نتيجة نموذج اللوحة
+   فك نتيجة نموذج YOLO
 ================================================== */
 
 function decodePlateDetection(
@@ -2385,7 +2888,8 @@ function decodePlateDetection(
 ){
 
     const dims =
-    output.dims || [];
+    output.dims ||
+    [];
 
 
     const values =
@@ -2393,21 +2897,38 @@ function decodePlateDetection(
 
 
     if(
-        dims.length !== 3
-    )
+        !dims ||
+        dims.length !== 3 ||
+        !values
+    ){
+
         return null;
 
+    }
 
-    let count;
 
-    let channels;
+    let count =
+    0;
+
+
+    let channels =
+    0;
+
 
     let transposed =
     false;
 
 
     /*
+    ==============================================
+    الصيغ الشائعة:
+
     [1,5,N]
+
+    أو
+
+    [1,N,5]
+    ==============================================
     */
 
     if(
@@ -2420,13 +2941,7 @@ function decodePlateDetection(
         count =
         dims[2];
 
-    }
-
-    /*
-    [1,N,5]
-    */
-
-    else{
+    }else{
 
         count =
         dims[1];
@@ -2441,9 +2956,13 @@ function decodePlateDetection(
 
 
     if(
-        channels < 5
-    )
+        channels < 5 ||
+        count <= 0
+    ){
+
         return null;
+
+    }
 
 
     let best =
@@ -2457,13 +2976,9 @@ function decodePlateDetection(
     ){
 
         let cx;
-
         let cy;
-
         let bw;
-
         let bh;
-
         let score;
 
 
@@ -2534,14 +3049,38 @@ function decodePlateDetection(
         }
 
 
+        /*
+        ==============================================
+        بعض النماذج تعطي logits
+        لذلك نحاول تحويلها
+        ==============================================
+        */
+
         if(
-            score < .20
-        )
+            score < 0 ||
+            score > 1
+        ){
+
+            score =
+            sigmoid(score);
+
+        }
+
+
+        if(
+            score <
+            PLATE_CONFIDENCE
+        ){
+
             continue;
+
+        }
 
 
         /*
+        ==============================================
         تحويل الإحداثيات
+        ==============================================
         */
 
         const bx =
@@ -2555,11 +3094,13 @@ function decodePlateDetection(
 
 
         const bwNorm =
-        bw / nw;
+        bw /
+        nw;
 
 
         const bhNorm =
-        bh / nh;
+        bh /
+        nh;
 
 
         if(
@@ -2567,8 +3108,11 @@ function decodePlateDetection(
             by < -.2 ||
             bx > 1.2 ||
             by > 1.2
-        )
+        ){
+
             continue;
+
+        }
 
 
         const px =
@@ -2620,17 +3164,22 @@ function decodePlateDetection(
         if(
             pw <= 5 ||
             ph <= 5
-        )
+        ){
+
             continue;
+
+        }
 
 
         const candidate = {
 
             x:
-            sourceX + px,
+            sourceX +
+            px,
 
             y:
-            sourceY + py,
+            sourceY +
+            py,
 
             w:
             pw,
@@ -2659,11 +3208,12 @@ function decodePlateDetection(
 
 
     return best;
+
 }
 
 
 /* ==================================================
-   OCR
+   OCR اللوحة
 ================================================== */
 
 async function readPlateOCR(
@@ -2706,28 +3256,32 @@ async function readPlateOCR(
     const sw =
     Math.min(
         video.videoWidth - sx,
-        w *
-        (1 + padding * 2)
+        w * (1 + padding * 2)
     );
 
 
     const sh =
     Math.min(
         video.videoHeight - sy,
-        h *
-        (1 + padding * 2)
+        h * (1 + padding * 2)
     );
 
 
+    /*
+    ==============================================
+    تكبير قوي
+    ==============================================
+    */
+
     const scale =
-    6;
+    8;
 
 
     source.width =
     Math.min(
-        1800,
+        2000,
         Math.max(
-            300,
+            400,
             Math.round(
                 sw * scale
             )
@@ -2737,9 +3291,9 @@ async function readPlateOCR(
 
     source.height =
     Math.min(
-        700,
+        800,
         Math.max(
-            120,
+            150,
             Math.round(
                 sh * scale
             )
@@ -2769,7 +3323,9 @@ async function readPlateOCR(
 
 
     /*
+    ==============================================
     تحسين الصورة
+    ==============================================
     */
 
     const image =
@@ -2806,33 +3362,26 @@ async function readPlateOCR(
         0.114 * b;
 
 
-        let value;
+        /*
+        زيادة التباين
+        */
+
+        let value =
+        (
+            gray - 128
+        ) *
+        1.45 +
+        128;
 
 
-        if(
-            gray > 145
-        ){
-
-            value =
-            255;
-
-        }
-
-        else if(
-            gray < 75
-        ){
-
-            value =
-            0;
-
-        }
-
-        else{
-
-            value =
-            gray;
-
-        }
+        value =
+        Math.max(
+            0,
+            Math.min(
+                255,
+                value
+            )
+        );
 
 
         image.data[i] =
@@ -2855,6 +3404,12 @@ async function readPlateOCR(
         0
     );
 
+
+    /*
+    ==============================================
+    OCR
+    ==============================================
+    */
 
     const ocr =
     await Tesseract.recognize(
@@ -2889,7 +3444,31 @@ function normalize(text){
     return String(
         text || ""
     )
+
     .toUpperCase()
+
+    /*
+    إزالة المسافات
+    */
+
+    .replace(
+        /\s+/g,
+        ""
+    )
+
+    /*
+    إزالة الشرطات
+    */
+
+    .replace(
+        /[-_]/g,
+        ""
+    )
+
+    /*
+    الاحتفاظ فقط بالحروف والأرقام
+    */
+
     .replace(
         /[^A-Z0-9]/g,
         ""
@@ -2899,7 +3478,103 @@ function normalize(text){
 
 
 /* ==================================================
-   Zoom
+   مطابقة الرقم
+================================================== */
+
+function isPlateMatch(
+    detected,
+    target
+){
+
+    if(
+        !detected ||
+        !target
+    ){
+
+        return false;
+
+    }
+
+
+    /*
+    مطابقة مباشرة
+    */
+
+    if(
+        detected === target
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+    إذا كانت القراءة تحتوي الرقم المطلوب
+    */
+
+    if(
+        detected.includes(target)
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+    إذا كان الرقم المقروء أطول قليلًا
+    نحاول مقارنة الأجزاء الرقمية
+    */
+
+    const detectedNumbers =
+    detected.replace(
+        /[^0-9]/g,
+        ""
+    );
+
+
+    const targetNumbers =
+    target.replace(
+        /[^0-9]/g,
+        ""
+    );
+
+
+    if(
+        targetNumbers.length >= 3 &&
+        detectedNumbers.includes(
+            targetNumbers
+        )
+    ){
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+/* ==================================================
+   Sigmoid
+================================================== */
+
+function sigmoid(x){
+
+    return 1 /
+    (
+        1 +
+        Math.exp(-x)
+    );
+
+}
+
+
+/* ==================================================
+   إنشاء الزوم
 ================================================== */
 
 function createZoom(
@@ -2930,17 +3605,25 @@ function createZoom(
     const sw =
     Math.min(
         video.videoWidth - sx,
-        w *
-        (1 + padding * 2)
+        w * (1 + padding * 2)
     );
 
 
     const sh =
     Math.min(
         video.videoHeight - sy,
-        h *
-        (1 + padding * 2)
+        h * (1 + padding * 2)
     );
+
+
+    if(
+        sw <= 10 ||
+        sh <= 10
+    ){
+
+        return;
+
+    }
 
 
     const width =
@@ -2949,7 +3632,7 @@ function createZoom(
 
     const height =
     Math.max(
-        300,
+        280,
         Math.round(
             width *
             sh /
@@ -2964,6 +3647,14 @@ function createZoom(
 
     zoomCanvas.height =
     height;
+
+
+    zoomCtx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
 
 
     zoomCtx.imageSmoothingEnabled =
@@ -2988,18 +3679,32 @@ function createZoom(
 
 
     /*
-    لون إطار التكبير
+    ==============================================
+    لون إطار الزوم
+    ==============================================
     */
 
-    if(lastMatch){
+    if(
+        lastMatch
+    ){
 
         zoomBox.style.borderColor =
         "#ff2020";
+
+        zoomBox.querySelector(
+            ".zoomTitle"
+        ).innerText =
+        "🚨 المركبة المطلوبة";
 
     }else{
 
         zoomBox.style.borderColor =
         "#ffd700";
+
+        zoomBox.querySelector(
+            ".zoomTitle"
+        ).innerText =
+        "🔎 المركبة قيد الاشتباه والفحص";
 
     }
 
@@ -3037,6 +3742,14 @@ function showSetup(){
 ================================================== */
 
 loadTarget();
+
+
+/*
+======================================================
+نبدأ تحميل النماذج مسبقًا في الخلفية.
+لكن لا نبدأ الكاميرا إلا بعد ضغط المستخدم.
+======================================================
+*/
 
 loadModels();
 
