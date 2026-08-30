@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>رصد المركبات</title>
+<title>رصد المركبات الذكي</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
@@ -30,12 +30,12 @@ h2{
 #viewer{
     position:relative;
     width:100%;
-    height:70vh;
+    height:62vh;
     background:#000;
     overflow:hidden;
 }
 
-video,canvas{
+video{
     position:absolute;
     inset:0;
     width:100%;
@@ -43,12 +43,35 @@ video,canvas{
     object-fit:cover;
 }
 
+canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+}
+
+#zoomBox{
+    display:none;
+    margin:10px auto;
+    width:90%;
+    max-width:500px;
+    background:#000;
+    border:3px solid #FFD700;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+#zoomCanvas{
+    width:100%;
+    display:block;
+}
+
 button{
-    padding:14px 25px;
-    margin:10px 5px;
+    padding:13px 20px;
+    margin:7px 4px;
     border:0;
     border-radius:10px;
-    font-size:18px;
+    font-size:17px;
     font-weight:bold;
 }
 
@@ -61,6 +84,11 @@ button{
     background:#444;
     color:white;
 }
+
+.photo{
+    background:#d89b00;
+    color:white;
+}
 </style>
 </head>
 
@@ -69,7 +97,7 @@ button{
 <h2>🚗 رصد المركبات الذكي</h2>
 
 <div id="status">
-جاري تحميل النموذج...
+جاري تحميل الذكاء الاصطناعي...
 </div>
 
 <div id="viewer">
@@ -83,12 +111,24 @@ button{
 
 </div>
 
+<div id="zoomBox">
+
+<div>🔎 التركيز على المركبة</div>
+
+<canvas id="zoomCanvas"></canvas>
+
+</div>
+
 <button class="start" onclick="startCamera()">
 تشغيل الكاميرا
 </button>
 
 <button class="stop" onclick="stopCamera()">
 إيقاف
+</button>
+
+<button class="photo" onclick="takePhoto()">
+📸 حفظ لقطة
 </button>
 
 <script>
@@ -106,56 +146,19 @@ document.getElementById("canvas");
 const ctx =
 canvas.getContext("2d");
 
+const zoomBox =
+document.getElementById("zoomBox");
+
+const zoomCanvas =
+document.getElementById("zoomCanvas");
+
+const zoomCtx =
+zoomCanvas.getContext("2d");
+
 const status =
 document.getElementById("status");
 
-let audioCtx = null;
-let lastAlert = 0;
-
-
-/* الصوت */
-
-function initAudio(){
-
-    if(!audioCtx){
-
-        audioCtx =
-        new (window.AudioContext ||
-        window.webkitAudioContext)();
-
-    }
-
-}
-
-function beep(){
-
-    const now = Date.now();
-
-    if(now - lastAlert < 2000) return;
-
-    lastAlert = now;
-
-    if(!audioCtx) return;
-
-    const osc =
-    audioCtx.createOscillator();
-
-    const gain =
-    audioCtx.createGain();
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.frequency.value = 440;
-    gain.gain.value = 0.04;
-
-    osc.start();
-
-    setTimeout(()=>{
-        osc.stop();
-    },100);
-
-}
+let selectedVehicle = null;
 
 
 /* تحميل النموذج */
@@ -165,7 +168,7 @@ async function loadModel(){
     try{
 
         status.innerText =
-        "جاري تحميل الذكاء الاصطناعي...";
+        "جاري تحميل نموذج اكتشاف السيارات...";
 
         await tf.ready();
 
@@ -173,7 +176,7 @@ async function loadModel(){
         await cocoSsd.load();
 
         status.innerText =
-        "✅ النموذج جاهز";
+        "✅ النموذج جاهز — شغّل الكاميرا";
 
     }catch(error){
 
@@ -187,7 +190,7 @@ async function loadModel(){
 }
 
 
-/* الكاميرا */
+/* تشغيل الكاميرا */
 
 async function startCamera(){
 
@@ -204,12 +207,6 @@ async function startCamera(){
 
     try{
 
-        initAudio();
-
-        if(audioCtx.state === "suspended"){
-            await audioCtx.resume();
-        }
-
         const stream =
         await navigator.mediaDevices
         .getUserMedia({
@@ -219,10 +216,10 @@ async function startCamera(){
                     ideal:"environment"
                 },
                 width:{
-                    ideal:960
+                    ideal:1280
                 },
                 height:{
-                    ideal:540
+                    ideal:720
                 }
             },
 
@@ -263,13 +260,15 @@ async function startCamera(){
 }
 
 
-/* إيقاف */
+/* إيقاف الكاميرا */
 
 function stopCamera(){
 
     running = false;
 
     detecting = false;
+
+    selectedVehicle = null;
 
     if(video.srcObject){
 
@@ -290,13 +289,23 @@ function stopCamera(){
         canvas.height
     );
 
+    zoomCtx.clearRect(
+        0,
+        0,
+        zoomCanvas.width,
+        zoomCanvas.height
+    );
+
+    zoomBox.style.display =
+    "none";
+
     status.innerText =
     "الكاميرا متوقفة";
 
 }
 
 
-/* الذكاء الاصطناعي */
+/* اكتشاف السيارات */
 
 async function detect(){
 
@@ -304,7 +313,8 @@ async function detect(){
 
     if(detecting){
 
-        requestAnimationFrame(detect);
+        setTimeout(detect,100);
+
         return;
 
     }
@@ -322,3 +332,230 @@ async function detect(){
             canvas.width,
             canvas.height
         );
+
+
+        const vehicles =
+        predictions.filter(p =>
+
+            (
+                p.class === "car" ||
+                p.class === "truck" ||
+                p.class === "bus"
+            )
+
+            && p.score >= 0.50
+
+        );
+
+
+        /*
+        اختيار السيارة ذات أعلى
+        درجة ثقة
+        */
+
+        selectedVehicle = null;
+
+        if(vehicles.length > 0){
+
+            selectedVehicle =
+            vehicles.reduce(
+                (best,current)=>
+                current.score >
+                best.score
+                ? current
+                : best
+            );
+
+        }
+
+
+        /*
+        رسم جميع السيارات بشكل
+        طبيعي بدون مربعات
+        */
+
+        vehicles.forEach(p=>{
+
+            const [x,y,w,h] =
+            p.bbox;
+
+            /*
+            فقط السيارة المختارة
+            تحصل على المربع الأصفر
+            */
+
+            if(
+                selectedVehicle &&
+                p === selectedVehicle
+            ){
+
+                ctx.strokeStyle =
+                "#FFD700";
+
+                ctx.lineWidth = 5;
+
+                ctx.strokeRect(
+                    x,y,w,h
+                );
+
+                ctx.fillStyle =
+                "#FFD700";
+
+                ctx.font =
+                "bold 20px Arial";
+
+                ctx.fillText(
+                    "🔎 مشتبه بها",
+                    x,
+                    Math.max(25,y-8)
+                );
+
+                createZoom(
+                    x,y,w,h
+                );
+
+            }
+
+        });
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+    detecting = false;
+
+    setTimeout(
+        detect,
+        150
+    );
+
+}
+
+
+/* الزوم الذكي */
+
+function createZoom(
+    x,y,w,h
+){
+
+    if(w <= 0 || h <= 0)
+        return;
+
+
+    /*
+    إضافة هامش حول السيارة
+    */
+
+    const padding = 0.20;
+
+    let sx =
+    Math.max(
+        0,
+        x - w * padding
+    );
+
+    let sy =
+    Math.max(
+        0,
+        y - h * padding
+    );
+
+    let sw =
+    Math.min(
+        video.videoWidth - sx,
+        w * (1 + padding * 2)
+    );
+
+    let sh =
+    Math.min(
+        video.videoHeight - sy,
+        h * (1 + padding * 2)
+    );
+
+
+    /*
+    حجم نافذة الزوم
+    */
+
+    const zoomWidth =
+    640;
+
+    const zoomHeight =
+    Math.round(
+        zoomWidth * sh / sw
+    );
+
+    zoomCanvas.width =
+    zoomWidth;
+
+    zoomCanvas.height =
+    zoomHeight;
+
+
+    zoomCtx.clearRect(
+        0,
+        0,
+        zoomWidth,
+        zoomHeight
+    );
+
+
+    zoomCtx.drawImage(
+        video,
+        sx,
+        sy,
+        sw,
+        sh,
+        0,
+        0,
+        zoomWidth,
+        zoomHeight
+    );
+
+
+    zoomBox.style.display =
+    "block";
+
+}
+
+
+/* حفظ لقطة */
+
+function takePhoto(){
+
+    if(!selectedVehicle){
+
+        alert(
+        "لم يتم اكتشاف مركبة حاليًا");
+
+        return;
+
+    }
+
+
+    const link =
+    document.createElement("a");
+
+    link.download =
+    "vehicle-test.png";
+
+    link.href =
+    zoomCanvas.toDataURL(
+        "image/png"
+    );
+
+    link.click();
+
+}
+
+
+/* تشغيل */
+
+loadModel();
+
+</script>
+
+</body>
+</html>
